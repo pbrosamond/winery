@@ -1,0 +1,33 @@
+// Font Variables
+$font-family: Quicksand, sans-serif;
+$light: 300; // Light
+$regular: 400; // Regular
+$medium: 500; // Medium
+$semiBold: 600; // SemiBold
+$bold: 700; //Bold
+
+// Primary Color Variables
+$color-black: #373737;
+$color-white: #FFFFFF;
+
+// Secondary Color Variables
+$color-grey: #D9D9D9;
+$color-cloud: #F7F7F7;
+
+// Gradient Color Variables
+$gradient-blue: 
+    linear-gradient(
+    to bottom right,
+    #6ADAD7,
+    #4B99D1
+    );
+$gradient-purple: 
+    linear-gradient(
+    to bottom right,
+    #709FFB,
+    #5F65F8
+    );
+
+// Supporting Color Variables
+$color-red: #C94515;
+

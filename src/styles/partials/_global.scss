@@ -1,0 +1,20 @@
+@use "./variables" as *;
+@use "./mixins" as *;
+@use "./typography" as *;
+
+* {
+  box-sizing: border-box;
+  font-family: $font-family;
+}
+
+html {
+  font-size: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+button {
+  cursor: pointer;
+}
