@@ -16,7 +16,7 @@
         @include logo;
     }
 
-    &__box1 {
+    &__box {
         @include flexbox(row, 1rem);
         align-items: center;
         grid-column: 6;
@@ -58,9 +58,8 @@
         height: 100%;
     }
 
-    // TODO - not working check mixing active line 74
-    &__active {
-        @include active;
+    &__link {
+        text-decoration: none;
     }
 
     &__links {
