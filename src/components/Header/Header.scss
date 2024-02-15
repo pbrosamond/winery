@@ -28,12 +28,20 @@
 
     &__account {
         @include p;
+
+        &:hover {
+            font-weight: $bold;
+        }
     }
 
     &__logout {
         @include p;
         padding: 0 1rem;
         border-left: .0625rem solid $color-black;
+
+        &:hover {
+            font-weight: $bold;
+        }
     }
 
     &__nav {
@@ -48,6 +56,11 @@
         padding: 0;
         margin: 0;
         height: 100%;
+    }
+
+    // TODO - not working check mixing active line 74
+    &__active {
+        @include active;
     }
 
     &__links {

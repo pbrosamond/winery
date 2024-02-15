@@ -16,7 +16,7 @@ function Header() {
         </div>
         <nav className="header__nav">
           <ul className="header__list">
-            <li>
+            <li className="header__active">
               <p className="header__links">fruit intake</p>
             </li>
             <li>
