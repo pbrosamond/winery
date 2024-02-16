@@ -5,11 +5,14 @@
 
 .header {
     @include header;
+    padding-bottom: 1.5rem;
 
     &__container {
         @include container;
         @include grid;
+        row-gap: 1rem;
         align-items: center;
+        padding-bottom: 0;
     }
 
     &__logo {
@@ -60,13 +63,14 @@
 
     &__link {
         text-decoration: none;
-    }
-
-    &__links {
         @include p;
 
         &:hover {
             font-weight: $bold;
+        }
+
+        &--active {
+            @include active;
         }
     }
 }

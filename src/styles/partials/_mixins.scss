@@ -53,11 +53,26 @@
 // Logo
 @mixin logo {
   height: 1.875rem;
+  width: 7.4375rem;
 }
 
 // Typography
-@mixin p {
+@mixin h1 {
+  font-size: 1.875rem;
+  font-weight: $regular;
+  color: $color-black;
+  margin: 0;
+}
+
+@mixin h2 {
   font-size: 1rem;
+  font-weight: $medium;
+  color: $color-black;
+  margin: 0;
+}
+
+@mixin p {
+  font-size: .875rem;
   font-weight: $medium;
   color: $color-black;
   margin: 0;
@@ -71,14 +86,65 @@
   grid-column: 1/7;
 }
 
-@mixin active {     // TODO - not working check Header component line 62
-  // height: 3.75rem;
-  // width: 10.6875rem;
-  // background-color: blue;
+@mixin active { 
+  @include flexbox;
+  justify-content: center;
+  align-items: center;
+  height: 3.75rem;
+  width: 10.6875rem;
+  border-radius: 20px;
+  background: $gradient-blue;
+  text-decoration: none;
+  @include p;
+  color: $color-white;
+  font-weight: $bold;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+
+  &:hover {
+    background: $gradient-darkblue;
+}
 }
 
 // Pointer
 @mixin pointer {
   cursor: pointer;
+}
+
+@mixin dropdown {
+  height: 3.75rem;
+  width: 10.6875rem;
+  border-radius: 1.25rem;
+  padding: 0 1.5rem;
+}
+
+@mixin input {
+  border: none;
+  outline: .0625rem solid $color-grey;
+}
+
+@mixin button {
+  height: 3.75rem;
+  width: 10.6875rem;
+  border-radius: 1.25rem;
+  border: none;
+  background: $gradient-purple;
+  @include h2;
+  color: $color-white;
+  @include pointer;
+
+  &:hover {
+    background: $gradient-darkpurple;
+}
+
+}
+
+@mixin dockets {
+  height: 3.75rem;
+  width: 10.6875rem;
+  border-radius: 1.25rem;
+  border: none;
+  background: $gradient-blue;
+  @include p;
+  color: $color-white;
 }
 

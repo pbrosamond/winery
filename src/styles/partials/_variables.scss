@@ -17,17 +17,28 @@ $color-cloud: #F7F7F7;
 // Gradient Color Variables
 $gradient-blue: 
     linear-gradient(
-    to bottom right,
-    #6ADAD7,
-    #4B99D1
+        to bottom right,
+        #6ADAD7,
+        #4B99D1
+    );
+$gradient-darkblue:
+    linear-gradient(
+        to bottom right,
+        #3FCFCB,
+        #2E7EB7
     );
 $gradient-purple: 
     linear-gradient(
-    to bottom right,
-    #709FFB,
-    #5F65F8
+        to bottom right,
+        #709FFB,
+        #5F65F8
     );
-
+$gradient-darkpurple:
+    linear-gradient(
+        to bottom right,
+        #397AF9,
+        #2830F6
+    );
 // Supporting Color Variables
 $color-red: #C94515;
 
