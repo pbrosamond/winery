@@ -118,13 +118,6 @@
         @include grid;
     }
 
-    &__docket {
-        @include dockets;
-        @include flexbox;
-        justify-content: center;
-        align-items: center;
-    }
-
     .box-margin {
         margin-top: 1rem; 
     }
@@ -195,51 +188,6 @@
         grid-row: 2;
         @include grid;
         grid-template-columns: repeat(3, 1fr);
-    }
-
-    &__subcontainer {
-        @include intakes;
-    }
-
-    &__info {
-        @include flexbox (column, 1rem);
-    }
-
-    &__intake {
-        @include flexbox (row, 1rem);
-        justify-content: space-between;
-
-        &--border {
-            @include flexbox;
-            justify-content: space-between;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid $color-grey;
-        }
-    }
-
-    &__text {
-        @include h2;
-    }
-
-    &__details {
-        @include p;
-
-        &--right {
-            @include p;
-            justify-self: flex-end;
-        }
-    }
-
-    &__border {
-        grid-column: 1/3;
-        border-top: .0625rem solid $color-grey;
-    }
-
-    &__icons {
-        @include flexbox;
-        justify-content: space-between;
-        align-items: flex-end;
-        height: inherit;
     }
 
     &__button3 {

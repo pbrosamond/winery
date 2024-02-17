@@ -1,0 +1,47 @@
+@use '../../styles/partials/global' as *;
+@use '../../styles/partials/variables' as *;
+@use '../../styles/partials/mixins' as *;
+@use '../../styles/partials/typography' as *;
+
+.intake {   
+
+    &__subcontainer {
+        @include intakes;
+    }
+
+    &__info {
+        @include flexbox (column, 1rem);
+    }
+
+    &__intake {
+        @include flexbox (row, 1rem);
+        justify-content: space-between;
+
+        &--border {
+            @include flexbox;
+            justify-content: space-between;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid $color-grey;
+        }
+    }
+
+    &__text {
+        @include h2;
+    }
+
+    &__details {
+        @include p;
+
+        &--right {
+            @include p;
+            justify-self: flex-end;
+        }
+    }
+
+    &__icons {
+        @include flexbox;
+        justify-content: space-between;
+        align-items: flex-end;
+        height: inherit;
+    }
+}

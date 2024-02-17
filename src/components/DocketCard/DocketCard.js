@@ -2,7 +2,7 @@ import '../DocketCard/DocketCard.scss'
 
 function DocketCard() {
     return (
-        <p className='main__docket'>docket 1</p>
+        <p className='docket'>docket 1</p>
     );
   };
   

@@ -82,7 +82,7 @@ function FruitIntakePage() {
           </select>
         </div>
 
-        <button className='main__button1'>+ add docket</button>
+        <button className='main__button1'>add docket</button>
 
       </form>
 
@@ -158,7 +158,7 @@ function FruitIntakePage() {
           </select>
         </div>
 
-        <button className='main__button2'>+ add intake</button>
+        <button className='main__button2'>add intake</button>
 
       </form>
 
