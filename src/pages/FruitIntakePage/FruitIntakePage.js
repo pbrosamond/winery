@@ -209,7 +209,6 @@ function FruitIntakePage() {
 
         <section className='main__intakes'>
           <IntakeCard />
-          <IntakeCard />
         </section>
 
         <button className='main__button3'>download report</button>
