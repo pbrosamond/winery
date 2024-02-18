@@ -5,11 +5,17 @@ import './FruitIntakePage.scss';
 const { REACT_APP_API_BASE_PATH } = process.env;
 
 function FruitIntakePage() {
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    console.log('this button is being pressed')
+  }
+
   return (
     <main className='main'>
       <h1 className='main__title'>add new docket</h1>
 
-      <form className='main__form1'>
+      <form onSubmit={onSubmit} className='main__form1'>
         <div className='main__box1'>
           <label htmlFor="dropdownField">
             <p className='main__label'>vintage year</p>
@@ -88,7 +94,7 @@ function FruitIntakePage() {
 
       <h1 className='main__title'>add new intake</h1>
 
-      <form className='main__form2 main__form2__row3'>
+      <form onSubmit={onSubmit} className='main__form2 main__form2__row3'>
         <div className='main__box7'>
           <label htmlFor="filterDropdownField" />
           <select className='main__dropdown--filter' id="filterDropdownField" name="filterDropdownField">
