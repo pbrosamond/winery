@@ -2,12 +2,29 @@ import DocketCard from "../../components/DocketCard/DocketCard";
 import IntakeCard from "../../components/IntakeCard/IntakeCard";
 import "./FruitIntakePage.scss";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const { REACT_APP_API_BASE_PATH } = process.env;
 
 function FruitIntakePage() {
+
+    // Get API request
+
+    const fetchDocketList = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/dockets`
+        );
+        setDocketList(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    useEffect(() => {
+        fetchDocketList();
+    }, []);
 
   const initialFormData = {
     vintage: '',
@@ -18,6 +35,7 @@ function FruitIntakePage() {
     row: '',
   };
   const [formData, setFormData] = useState(initialFormData);
+  const [docketList, setDocketList] = useState([]);
 
   const handleInputChangeDocket = (e) => {
     const { name, value } = e.target;
@@ -33,6 +51,7 @@ function FruitIntakePage() {
         formData
       );
       setFormData(initialFormData);
+      fetchDocketList();
       // Handle successful response
       console.log(response.data); // Log the response from the backend
     } catch (error) {
@@ -190,7 +209,11 @@ function FruitIntakePage() {
         </div>
 
         <section className="main__dockets">
-          <DocketCard />
+          {docketList.map((docket) => {
+            return (
+              <DocketCard docket={docket}/>
+            )
+          })}
         </section>
 
         <div className="main__box8 box-margin">

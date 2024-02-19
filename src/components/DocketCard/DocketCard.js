@@ -1,9 +1,9 @@
 import '../DocketCard/DocketCard.scss'
 
-function DocketCard() {
+function DocketCard({docket}) {
     
     return (
-        <p className='docket'>docket 1</p>
+        <p className='docket'>{docket.docket_name}</p>
     );
   };
   
