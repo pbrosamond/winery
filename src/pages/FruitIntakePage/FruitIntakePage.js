@@ -1,5 +1,7 @@
 import DocketCard from "../../components/DocketCard/DocketCard";
 import IntakeCard from "../../components/IntakeCard/IntakeCard";
+import exportToCSV from "../../utils/exportToCSV";
+
 import "./FruitIntakePage.scss";
 
 import React, { useState, useEffect } from "react";
@@ -406,7 +408,7 @@ function FruitIntakePage() {
           })}
         </section>
 
-        <button className="main__button3">download report</button>
+        <button className="main__button3" onClick={() => exportToCSV(intakeList)}>download report</button>
       </section>
     </main>
   );
