@@ -3,43 +3,45 @@ import './IntakeCard.scss';
 import editIcon from '../../assets/icons/editIcon.svg'
 import deleteIcon from '../../assets/icons/deleteIcon.svg'
 
-function IntakeCard() {
+import formatDate from '../../utils/formatDate';
+
+function IntakeCard({intake}) {
     return (
         <section className='intake__subcontainer'>
         <div className='intake__intake--border'>
           <h2 className='intake__text'>intake 1</h2>
-          <h2 className='intake__text'>date</h2>
+          <h2 className='intake__text'>{formatDate(intake.intake_date)}</h2>
         </div>
 
         <section className='intake__info'>
           <div className='intake__intake'>
             <p className='intake__details'>docket</p>
-            <p className='intake__details--right'>id</p>
+            <p className='intake__details--right'>{intake.docket_name}</p>
           </div>
 
           <div className='intake__intake'>
             <p className='intake__details'>bins</p>
-            <p className='intake__details--right'>id</p>
+            <p className='intake__details--right'>{intake.bins}</p>
           </div>
 
           <div className='intake__intake'>
             <p className='intake__details'>total weight</p>
-            <p className='intake__details--right'>id</p>
+            <p className='intake__details--right'>{intake.total_weight}</p>
           </div>
 
           <div className='intake__intake'>
             <p className='intake__details'>tare weight</p>
-            <p className='intake__details--right'>id</p>
+            <p className='intake__details--right'>{intake.tare_weight}</p>
           </div>
 
           <div className='intake__intake'>
             <p className='intake__details'>fruit weight</p>
-            <p className='intake__details--right'>id</p>
+            <p className='intake__details--right'>{intake.fruit_weight}</p>
           </div>
 
           <div className='intake__intake'>
             <p className='intake__details'>predicted volume</p>
-            <p className='intake__details--right'>id</p>
+            <p className='intake__details--right'>{intake.predicted_volume}</p>
           </div>
         </section>
 

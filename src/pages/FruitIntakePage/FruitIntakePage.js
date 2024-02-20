@@ -9,13 +9,11 @@ const { REACT_APP_API_BASE_PATH } = process.env;
 
 function FruitIntakePage() {
 
-    // Get API request
+    // Docket API Request
 
     const fetchDocketList = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/dockets`
-        );
+        const response = await axios.get(`http://localhost:8080/api/dockets`);
         setDocketList(response.data);
       } catch (error) {
         console.error(error);
@@ -23,41 +21,91 @@ function FruitIntakePage() {
     };
   
     useEffect(() => {
-        fetchDocketList();
-    }, []);
-
-  const initialFormData = {
-    vintage: '',
-    grower: '',
-    varietal: '',
-    vineyard: '',
-    block: '',
-    row: '',
-  };
-  const [formData, setFormData] = useState(initialFormData);
-  const [docketList, setDocketList] = useState([]);
-
-  const handleInputChangeDocket = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmitDocket = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await axios.post(
-        "http://localhost:8080/api/dockets",
-        formData
-      );
-      setFormData(initialFormData);
       fetchDocketList();
-      // Handle successful response
-      console.log(response.data); // Log the response from the backend
-    } catch (error) {
-      console.error("Error submitting data:", error.message);
-    }
-  };
+    }, []);
+  
+    const initialDocketData = {
+      vintage: "",
+      grower: "",
+      varietal: "",
+      vineyard: "",
+      block: "",
+      row: "",
+    };
+
+    const [docketData, setDocketData] = useState(initialDocketData);
+    const [docketList, setDocketList] = useState([]);
+  
+    const handleInputChangeDocket = (e) => {
+      const { name, value } = e.target;
+      setDocketData({ ...docketData, [name]: value });
+    };
+  
+    const handleSubmitDocket = async (e) => {
+      e.preventDefault();
+  
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/dockets",
+          docketData
+        );
+        setDocketData(initialDocketData);
+        fetchDocketList();
+        // Handle successful response
+        console.log(response.data); // Log the response from the backend
+      } catch (error) {
+        console.error("Error submitting data:", error.message);
+      }
+    };
+
+    // Intake API Request
+
+    const fetchIntakeList = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/intakes`);
+        setIntakeList(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    useEffect(() => {
+      fetchIntakeList();
+    }, []);
+  
+    const initialIntakeData = {
+      docket_name: "",
+      bins: "",
+      total_weight: "",
+      tare_weight: "",
+      block: "",
+      row: "",
+    };
+    
+    const [intakeData, setIntakeData] = useState(initialIntakeData);
+    const [intakeList, setIntakeList] = useState([]);
+  
+    const handleInputChangeIntake = (e) => {
+      const { name, value } = e.target;
+      setIntakeData({ ...intakeData, [name]: value });
+    };
+  
+    const handleSubmitIntake = async (e) => {
+      e.preventDefault();
+  
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/intakes",
+          intakeData
+        );
+        setIntakeData(initialIntakeData);
+        fetchIntakeList();
+        // Handle successful response
+        console.log(response.data); // Log the response from the backend
+      } catch (error) {
+        console.error("Error submitting data:", error.message);
+      }
+    };
 
   return (
     <main className="main">
@@ -72,10 +120,10 @@ function FruitIntakePage() {
             className="main__dropdown" 
             id="vintage" 
             name="vintage" 
-            value={formData.vintage} 
+            value={docketData.vintage} 
             onChange={handleInputChangeDocket}
           >
-            <option value="" disabled selected />
+            <option value="" disabled />
             <option value="2024">2024</option>
             <option value="2023">2023</option>
             <option value="2022">2022</option>
@@ -90,10 +138,10 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="grower"
             name="grower"
-            value={formData.grower} 
+            value={docketData.grower} 
             onChange={handleInputChangeDocket}
           >
-            <option value="" disabled selected />
+            <option value="" disabled />
             <option value="Blue Grouse">Blue Grouse</option>
             <option value="Unsworth">Unsworth</option>
             <option value="Sonoma Mill">Sonoma Mill</option>
@@ -108,10 +156,10 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="varietal"
             name="varietal"
-            value={formData.varietal} 
+            value={docketData.varietal} 
             onChange={handleInputChangeDocket}
           >
-            <option value="" disabled selected />
+            <option value="" disabled />
             <option value="Chardonnay">Chardonnay</option>
             <option value="Pinot Noir">Pinot Noir</option>
             <option value="Furmint">Furmint</option>
@@ -126,10 +174,10 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="vineyard"
             name="vineyard"
-            value={formData.vineyard} 
+            value={docketData.vineyard} 
             onChange={handleInputChangeDocket}
           >
-            <option value="" disabled selected />
+            <option value="" disabled />
             <option value="Imhof">Imhof</option>
             <option value="Carlos">Carlos</option>
             <option value="Syracuse">Syracuse</option>
@@ -144,10 +192,10 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="block"
             name="block"
-            value={formData.block} 
+            value={docketData.block} 
             onChange={handleInputChangeDocket}
           >
-            <option value="" disabled selected />
+            <option value="" disabled />
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -162,10 +210,10 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="row"
             name="row"
-            value={formData.row} 
+            value={docketData.row} 
             onChange={handleInputChangeDocket}
           >
-            <option value="" disabled selected />
+            <option value="" disabled />
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -179,7 +227,7 @@ function FruitIntakePage() {
 
       <h1 className="main__title">add new intake</h1>
 
-      <form className="main__form2 main__form2__row3">
+      <form className="main__form2 main__form2__row3" onSubmit={handleSubmitIntake}>
         <div className="main__box7">
           <label htmlFor="filterDropdownField" />
           <select
@@ -187,7 +235,7 @@ function FruitIntakePage() {
             id="filterDropdownField"
             name="filterDropdownField"
           >
-            <option value="" disabled selected>
+            <option value="" disabled>
               filter
             </option>
             <option value="all">All</option>
@@ -224,13 +272,15 @@ function FruitIntakePage() {
             className="main__dropdown--date"
             id="dropdownField"
             name="dropdownField"
+            value={intakeData.intake_date} 
+            onChange={handleInputChangeIntake}
           >
-            <option value="today's date" disabled selected>
+            <option value="today's date" disabled>
               01 | 03 | 2024
             </option>
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
+            <option value="date1">Date 1</option>
+            <option value="date2">Date 2</option>
+            <option value="date3">Date 3</option>
           </select>
         </div>
 
@@ -242,11 +292,13 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="dropdownField"
             name="dropdownField"
+            value={intakeData.bins} 
+            onChange={handleInputChangeIntake}
           >
-            <option value="" disabled selected />
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
+            <option value="" disabled />
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
           </select>
         </div>
 
@@ -254,35 +306,29 @@ function FruitIntakePage() {
           <label htmlFor="dropdownField">
             <p className="main__label">total weight</p>
           </label>
-          <select
+          <input
             className="main__dropdown"
             id="dropdownField"
             name="dropdownField"
-          >
-            <option value="" disabled selected />
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-          </select>
+            value={intakeData.total_weight} 
+            onChange={handleInputChangeIntake}
+          />
         </div>
 
         <div className="main__box11 box-margin">
           <label htmlFor="dropdownField">
             <p className="main__label">tare weight</p>
           </label>
-          <select
+          <input
             className="main__dropdown"
             id="dropdownField"
             name="dropdownField"
-          >
-            <option value="" disabled selected />
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-          </select>
-        </div>
+            value={intakeData.tare_weight} 
+            onChange={handleInputChangeIntake}
+          />
+          </div>
 
-        <button className="main__button2">add intake</button>
+        <button className="main__button2" type="submit">add intake</button>
       </form>
 
       <h1 className="main__title">fruit intake report</h1>
@@ -297,7 +343,7 @@ function FruitIntakePage() {
             id="dropdownField"
             name="dropdownField"
           >
-            <option value="today's date" disabled selected>
+            <option value="today's date" disabled>
               01 | 03 | 2024
             </option>
             <option value="option1">Option 1</option>
@@ -315,7 +361,7 @@ function FruitIntakePage() {
             id="dropdownField"
             name="dropdownField"
           >
-            <option value="today's date" disabled selected>
+            <option value="today's date" disabled>
               01 | 03 | 2024
             </option>
             <option value="option1">Option 1</option>
@@ -331,7 +377,7 @@ function FruitIntakePage() {
             id="filterDropdownField"
             name="filterDropdownField"
           >
-            <option value="" disabled selected>
+            <option value="" disabled>
               filter
             </option>
             <option value="all">All</option>
@@ -353,7 +399,11 @@ function FruitIntakePage() {
         </div>
 
         <section className="main__intakes">
-          <IntakeCard />
+          {intakeList.map((intake) => {
+            return (
+              <IntakeCard intake={intake}/>
+            )
+          })}
         </section>
 
         <button className="main__button3">download report</button>
