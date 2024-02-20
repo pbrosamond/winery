@@ -157,6 +157,10 @@
         grid-template-rows: repeat(3, auto);
         padding-bottom: 3rem;
         border-bottom: .0625rem solid $color-grey;
+
+        &:last-child {
+            border-bottom: none;
+        }
     }
 
     &__box13 {

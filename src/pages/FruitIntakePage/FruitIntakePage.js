@@ -47,7 +47,7 @@ function FruitIntakePage() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/docket",
+        "http://localhost:8080/api/dockets",
         formData
       );
       setFormData(initialFormData);
