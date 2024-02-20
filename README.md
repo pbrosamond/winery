@@ -83,26 +83,23 @@ CellarHand addresses the prevalent issues in winemaking software by tackling the
 
 ### Mockups
 
-#### Dashboard Page
-![](dashboard.png)
-
 #### Fruit Intake Page
-![](fruitIntake.png) **This page will be the focus for my demo due to time constraints**
+![](./src/assets/mockups/Fruit%20Intake.jpg) **This page will be the focus for my demo due to time constraints**
 
 #### Crush Order Page
-![](crushOrder.png)
+![](./src/assets/mockups/Crush%20Order.jpg)
 
 #### Additives Page
-![](additives.png)
+![](./src/assets/mockups/Additives.jpg)
 
 #### Lab Analysis Page
-![](labAnalysis.png)
+![](./src/assets/mockups/Lab%20Analysis.jpg)
 
 #### Racking Page
-![](racking.png)
+![](./src/assets/mockups/Racking.jpg)
 
 #### Bottling Page
-![](bottling.png)
+![](./src/assets/mockups/Bottling.jpg)
 
 
 ### Endpoints **The following endpoint are focused on the fruit intake page for my demo due to time constraints**
