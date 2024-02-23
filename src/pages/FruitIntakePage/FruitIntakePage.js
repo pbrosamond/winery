@@ -142,10 +142,10 @@ function FruitIntakePage() {
   // Search Bar Dockets
 
   const [docketSearchQuery, setDocketSearchQuery] = useState("");
-  const [filteredDocketCards, setFilteredDocketCards] = useState(docketList);
+  const [searchedDocketCards, setSearchedDocketCards] = useState(docketList);
 
   const [intakeSearchQuery, setIntakeSearchQuery] = useState("");
-  const [filteredIntakeCards, setFilteredIntakeCards] = useState(intakeList);
+  const [searchedIntakeCards, setSearchedIntakeCards] = useState(intakeList);
 
 // Function to handle search input change
 const handleDocketSearchChange = (event) => {
@@ -158,10 +158,10 @@ const handleDocketSearchChange = (event) => {
 const filterDocketCards = (query) => {
   // If the search query is empty, show all dockets
   if (query.trim() === '') {
-    setFilteredDocketCards(docketList);
+    setSearchedDocketCards(docketList);
   } else {
     // Otherwise, filter based on the search query
-    const filtered = docketList.filter((docket) =>
+    const searched = docketList.filter((docket) =>
       docket.docket_name.includes(query) ||
       (typeof docket.vintage === 'object' && docket.vintage.hasOwnProperty(query)) ||
       docket.grower.includes(query) ||
@@ -170,7 +170,7 @@ const filterDocketCards = (query) => {
       docket.block.includes(query) ||
       docket.row.includes(query)
     );
-    setFilteredDocketCards(filtered);
+    setSearchedDocketCards(searched);
   }
 };
 
@@ -191,14 +191,14 @@ filterIntakeCards(query);
 const filterIntakeCards = (query) => {
 // If the search query is empty, show all intakes
 if (query.trim() === '') {
-  setFilteredIntakeCards(intakeList);
+  setSearchedIntakeCards(intakeList);
 } else {
   // Otherwise, filter based on the search query
-  const filtered = intakeList.filter((intake) =>
+  const searched = intakeList.filter((intake) =>
     (typeof intake.intake_id === 'object' && intake.intake_id.hasOwnProperty(query)) ||
     intake.docket_name.includes(query)
   );
-  setFilteredIntakeCards(filtered);
+  setSearchedIntakeCards(searched);
 }
 };
 
@@ -373,7 +373,7 @@ useEffect(() => {
         </div>
 
         <section className="main__dockets">
-          {filteredDocketCards.map((docket) => {
+          {searchedDocketCards.map((docket) => {
             return (
               <DocketCard
                 key={docket.docket_id}
@@ -482,7 +482,7 @@ useEffect(() => {
         </div>
 
         <section className="main__intakes">
-          {filteredIntakeCards
+          {searchedIntakeCards
             .filter((intake) => {
               if (!endDate) return true;
               const intakeDate = new Date(intake.intake_date);
