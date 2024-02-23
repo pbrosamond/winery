@@ -12,134 +12,199 @@ import axios from "axios";
 const { REACT_APP_API_BASE_PATH } = process.env;
 
 function FruitIntakePage() {
+  // Docket API Request
 
-    // Docket API Request
+  const fetchDocketList = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/dockets`);
+      setDocketList(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    const fetchDocketList = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/dockets`);
-        setDocketList(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-  
-    useEffect(() => {
+  useEffect(() => {
+    fetchDocketList();
+  }, []);
+
+  const initialDocketData = {
+    vintage: "",
+    grower: "",
+    varietal: "",
+    vineyard: "",
+    block: "",
+    row: "",
+  };
+
+  const [docketData, setDocketData] = useState(initialDocketData);
+  const [docketList, setDocketList] = useState([]);
+
+  const handleInputChangeDocket = (e) => {
+    const { name, value } = e.target;
+    setDocketData({ ...docketData, [name]: value });
+  };
+
+  const handleSubmitDocket = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/dockets",
+        docketData
+      );
+      setDocketData(initialDocketData);
       fetchDocketList();
-    }, []);
-  
-    const initialDocketData = {
-      vintage: "",
-      grower: "",
-      varietal: "",
-      vineyard: "",
-      block: "",
-      row: "",
-    };
+      // Handle successful response
+      console.log(response.data); // Log the response from the backend
+    } catch (error) {
+      console.error("Error submitting data:", error.message);
+    }
+  };
 
-    const [docketData, setDocketData] = useState(initialDocketData);
-    const [docketList, setDocketList] = useState([]);
-  
-    const handleInputChangeDocket = (e) => {
-      const { name, value } = e.target;
-      setDocketData({ ...docketData, [name]: value });
-    };
-  
-    const handleSubmitDocket = async (e) => {
-      e.preventDefault();
-  
-      try {
-        const response = await axios.post(
-          "http://localhost:8080/api/dockets",
-          docketData
-        );
-        setDocketData(initialDocketData);
-        fetchDocketList();
-        // Handle successful response
-        console.log(response.data); // Log the response from the backend
-      } catch (error) {
-        console.error("Error submitting data:", error.message);
-      }
-    };
+  // Handle Docket Click
 
-    // Handle Docket Click
+  const handleDocketClick = (docket) => {
+    setIntakeData(Object.assign({}, initialIntakeData, docket));
+  };
 
-    const handleDocketClick = (docket) => {
-      setIntakeData(Object.assign({}, initialIntakeData, docket))
-    } 
+  // Intake API Request
 
-    
+  const fetchIntakeList = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/intakes`);
+      setIntakeList(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    // Intake API Request
+  useEffect(() => {
+    fetchIntakeList();
+  }, []);
 
-    const fetchIntakeList = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/intakes`);
-        setIntakeList(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-  
-    useEffect(() => {
+  const initialIntakeData = {
+    docket_name: "",
+    intake_date: "",
+    bins: "",
+    total_weight: "",
+    tare_weight: "",
+    block: "",
+    row: "",
+  };
+
+  const [intakeData, setIntakeData] = useState(initialIntakeData);
+  const [intakeList, setIntakeList] = useState([]);
+
+  const handleInputChangeIntake = (e) => {
+    const { name, value } = e.target;
+    console.log("name and value", name, value);
+    setIntakeData({ ...intakeData, [name]: value });
+  };
+
+  const handleSubmitIntake = async (e) => {
+    e.preventDefault();
+
+    const newIntakeData = Object.assign({}, intakeData);
+    newIntakeData.intake_date = new Date(intakeDate).toISOString().slice(0, 10);
+
+    console.log("submitting intake");
+    console.log("intake data", newIntakeData);
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/intakes",
+        newIntakeData
+      );
+      setIntakeData(initialIntakeData);
       fetchIntakeList();
-    }, []);
-  
-    const initialIntakeData = {
-      docket_name: "",
-      intake_date: "",
-      bins: "",
-      total_weight: "",
-      tare_weight: "",
-      block: "",
-      row: "",
-    };
-    
-    const [intakeData, setIntakeData] = useState(initialIntakeData);
-    const [intakeList, setIntakeList] = useState([]);
-  
-    const handleInputChangeIntake = (e) => {
-      const { name, value } = e.target;
-      console.log("name and value", name, value)
-      setIntakeData({ ...intakeData, [name]: value });
-    };
-  
-    const handleSubmitIntake = async (e) => {
-      e.preventDefault();
+    } catch (error) {
+      console.error("Error submitting data:", error.message);
+    }
+  };
 
-      const newIntakeData = Object.assign({}, intakeData)
-      newIntakeData.intake_date = new Date(intakeDate).toISOString().slice(0, 10);;
+  // Date Picker
 
-      console.log("submitting intake")
-      console.log("intake data", newIntakeData);
-      try {
-        const response = await axios.post(
-          "http://localhost:8080/api/intakes",
-          newIntakeData
-        );
-        setIntakeData(initialIntakeData);
-        fetchIntakeList();
-      } catch (error) {
-        console.error("Error submitting data:", error.message);
-      }
-    };
+  const [intakeDate, setIntakeDate] = useState(
+    new Date() // Set your initial date here
+  );
 
-    // Date Picker
-  
-    const [intakeDate, setIntakeDate] = useState(
-      new Date() // Set your initial date here
-    );
-  
-    const handleDateChange = (date) => {
-      setIntakeDate(date);
-    };
-    
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(null);
-    const onChange = (dates) => {
+  const handleDateChange = (date) => {
+    setIntakeDate(date);
+  };
+
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(null);
+  const onChange = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
-    setEndDate(end); };
+    setEndDate(end);
+  };
+
+  // Search Bar Dockets
+
+  const [docketSearchQuery, setDocketSearchQuery] = useState("");
+  const [filteredDocketCards, setFilteredDocketCards] = useState(docketList);
+
+  const [intakeSearchQuery, setIntakeSearchQuery] = useState("");
+  const [filteredIntakeCards, setFilteredIntakeCards] = useState(intakeList);
+
+// Function to handle search input change
+const handleDocketSearchChange = (event) => {
+  const query = event.target.value;
+  setDocketSearchQuery(query);
+  // Call a function to filter docket cards based on the search query
+  filterDocketCards(query);
+};
+
+const filterDocketCards = (query) => {
+  // If the search query is empty, show all dockets
+  if (query.trim() === '') {
+    setFilteredDocketCards(docketList);
+  } else {
+    // Otherwise, filter based on the search query
+    const filtered = docketList.filter((docket) =>
+      docket.docket_name.includes(query) ||
+      (typeof docket.vintage === 'object' && docket.vintage.hasOwnProperty(query)) ||
+      docket.grower.includes(query) ||
+      docket.varietal.includes(query) ||
+      docket.vineyard.includes(query) ||
+      docket.block.includes(query) ||
+      docket.row.includes(query)
+    );
+    setFilteredDocketCards(filtered);
+  }
+};
+
+useEffect(() => {
+  filterDocketCards(docketSearchQuery);
+}, [docketSearchQuery, docketList]);
+
+// Search Bar Intakes
+
+// Function to handle search input change
+const handleIntakeSearchChange = (event) => {
+const query = event.target.value;
+  setIntakeSearchQuery(query);
+// Call a function to filter docket cards based on the search query
+filterIntakeCards(query);
+};
+
+const filterIntakeCards = (query) => {
+// If the search query is empty, show all intakes
+if (query.trim() === '') {
+  setFilteredIntakeCards(intakeList);
+} else {
+  // Otherwise, filter based on the search query
+  const filtered = intakeList.filter((intake) =>
+    (typeof intake.intake_id === 'object' && intake.intake_id.hasOwnProperty(query)) ||
+    intake.docket_name.includes(query)
+  );
+  setFilteredIntakeCards(filtered);
+}
+};
+
+useEffect(() => {
+  filterIntakeCards(intakeSearchQuery);
+}, [intakeSearchQuery, intakeList]);
 
   return (
     <main className="main">
@@ -150,11 +215,11 @@ function FruitIntakePage() {
           <label htmlFor="vintage">
             <p className="main__label">vintage year</p>
           </label>
-          <select 
-            className="main__dropdown" 
-            id="vintage" 
-            name="vintage" 
-            value={docketData.vintage} 
+          <select
+            className="main__dropdown"
+            id="vintage"
+            name="vintage"
+            value={docketData.vintage}
             onChange={handleInputChangeDocket}
           >
             <option value="" disabled />
@@ -172,7 +237,7 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="grower"
             name="grower"
-            value={docketData.grower} 
+            value={docketData.grower}
             onChange={handleInputChangeDocket}
           >
             <option value="" disabled />
@@ -190,7 +255,7 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="varietal"
             name="varietal"
-            value={docketData.varietal} 
+            value={docketData.varietal}
             onChange={handleInputChangeDocket}
           >
             <option value="" disabled />
@@ -208,7 +273,7 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="vineyard"
             name="vineyard"
-            value={docketData.vineyard} 
+            value={docketData.vineyard}
             onChange={handleInputChangeDocket}
           >
             <option value="" disabled />
@@ -226,7 +291,7 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="block"
             name="block"
-            value={docketData.block} 
+            value={docketData.block}
             onChange={handleInputChangeDocket}
           >
             <option value="" disabled />
@@ -244,7 +309,7 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="row"
             name="row"
-            value={docketData.row} 
+            value={docketData.row}
             onChange={handleInputChangeDocket}
           >
             <option value="" disabled />
@@ -261,16 +326,18 @@ function FruitIntakePage() {
 
       <h1 className="main__title">add new intake</h1>
 
-      <form className="main__form2 main__form2__row3" onSubmit={(e) => e.preventDefault()}>
-        
-      <div className="main__box8 box-margin">
+      <form
+        className="main__form2 main__form2__row3"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        <div className="main__box8 box-margin">
           <label htmlFor="intake_date">
             <p className="main__label">date</p>
           </label>
           <DatePicker
             selected={intakeDate}
             onChange={handleDateChange}
-            dateFormat="yyyy-MM-dd"
+            dateFormat="yyyy | MM | dd"
             className="main__dropdown--date"
           />
         </div>
@@ -300,14 +367,21 @@ function FruitIntakePage() {
             id="search_dockets"
             name="search_dockets"
             placeholder="search"
+            value={docketSearchQuery}
+            onChange={handleDocketSearchChange}
           />
         </div>
 
         <section className="main__dockets">
-          {docketList.map((docket) => {
+          {filteredDocketCards.map((docket) => {
             return (
-              <DocketCard key={docket.docket_id} docket={docket} selectedDocket={intakeData.docket_name} onClick={() => handleDocketClick(docket)}/>
-            )
+              <DocketCard
+                key={docket.docket_id}
+                docket={docket}
+                selectedDocket={docketData.docket_name}
+                onClick={() => handleDocketClick(docket)}
+              />
+            );
           })}
         </section>
 
@@ -319,7 +393,7 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="bins"
             name="bins"
-            value={intakeData.bins} 
+            value={intakeData.bins}
             onChange={handleInputChangeIntake}
           />
         </div>
@@ -332,7 +406,7 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="total_weight"
             name="total_weight"
-            value={intakeData.total_weight} 
+            value={intakeData.total_weight}
             onChange={handleInputChangeIntake}
           />
         </div>
@@ -345,12 +419,18 @@ function FruitIntakePage() {
             className="main__dropdown"
             id="tare_weight"
             name="tare_weight"
-            value={intakeData.tare_weight} 
+            value={intakeData.tare_weight}
             onChange={handleInputChangeIntake}
           />
-          </div>
+        </div>
 
-        <button className="main__button2" type="submit" onClick={handleSubmitIntake}>add intake</button>
+        <button
+          className="main__button2"
+          type="submit"
+          onClick={handleSubmitIntake}
+        >
+          add intake
+        </button>
       </form>
 
       <h1 className="main__title">fruit intake report</h1>
@@ -361,13 +441,13 @@ function FruitIntakePage() {
             <p className="main__label">date range</p>
           </label>
           <DatePicker
-              selected={startDate}
-              onChange={onChange}
-              startDate={startDate}
-              endDate={endDate}
-              selectsRange
-              dateFormat="yyyy | MM | dd"
-              className="main__dropdown--date"
+            selected={startDate}
+            onChange={onChange}
+            startDate={startDate}
+            endDate={endDate}
+            selectsRange
+            dateFormat="yyyy | MM | dd"
+            className="main__dropdown--date"
           />
         </div>
 
@@ -396,23 +476,29 @@ function FruitIntakePage() {
             id="search_intake"
             name="search_intake"
             placeholder="search"
+            value={intakeSearchQuery}
+            onChange={handleIntakeSearchChange}
           />
         </div>
 
         <section className="main__intakes">
-          {intakeList
-          .filter((intake) => { if (!endDate) return true;
+          {filteredIntakeCards
+            .filter((intake) => {
+              if (!endDate) return true;
               const intakeDate = new Date(intake.intake_date);
               return intakeDate >= startDate && intakeDate <= endDate;
             })
             .map((intake) => {
-            return (
-              <IntakeCard key={intake.intake_id} intake={intake} />
-            )
-          })}
+              return <IntakeCard key={intake.intake_id} intake={intake} />;
+            })}
         </section>
 
-        <button className="main__button3" onClick={() => exportToCSV(intakeList)}>download report</button>
+        <button
+          className="main__button3"
+          onClick={() => exportToCSV(intakeList)}
+        >
+          download report
+        </button>
       </section>
     </main>
   );
