@@ -1,10 +1,18 @@
 import '../DocketCard/DocketCard.scss'
 
-function DocketCard({docket}) {
-    
-    return (
-        <p className='docket'>{docket.docket_name}</p>
-    );
+import React from 'react';
+
+function DocketCard({ docket, onClick, selectedDocket }) {
+  const handleDocketClick = () => {
+    // Call the onClick function with the docket data
+    onClick(docket.docket_name);
   };
-  
-  export default DocketCard;
+
+  return (
+    <button className={'docket ' + (selectedDocket === docket.docket_name ? 'selected' : '') } onClick={handleDocketClick}>
+      {docket.docket_name}
+    </button>
+  );
+}
+
+export default DocketCard;

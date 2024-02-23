@@ -23,6 +23,7 @@
         @include flexbox(row, 1rem);
         align-items: center;
         grid-column: 6;
+        max-width: fit-content;
     }
 
     &__profile {

@@ -1,6 +1,8 @@
 import DocketCard from "../../components/DocketCard/DocketCard";
 import IntakeCard from "../../components/IntakeCard/IntakeCard";
 import exportToCSV from "../../utils/exportToCSV";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import "./FruitIntakePage.scss";
 
@@ -60,6 +62,14 @@ function FruitIntakePage() {
       }
     };
 
+    // Handle Docket Click
+
+    const handleDocketClick = (docket) => {
+      setIntakeData(Object.assign({}, initialIntakeData, docket))
+    } 
+
+    
+
     // Intake API Request
 
     const fetchIntakeList = async () => {
@@ -77,6 +87,7 @@ function FruitIntakePage() {
   
     const initialIntakeData = {
       docket_name: "",
+      intake_date: "",
       bins: "",
       total_weight: "",
       tare_weight: "",
@@ -89,25 +100,46 @@ function FruitIntakePage() {
   
     const handleInputChangeIntake = (e) => {
       const { name, value } = e.target;
+      console.log("name and value", name, value)
       setIntakeData({ ...intakeData, [name]: value });
     };
   
     const handleSubmitIntake = async (e) => {
       e.preventDefault();
-  
+
+      const newIntakeData = Object.assign({}, intakeData)
+      newIntakeData.intake_date = new Date(intakeDate).toISOString().slice(0, 10);;
+
+      console.log("submitting intake")
+      console.log("intake data", newIntakeData);
       try {
         const response = await axios.post(
           "http://localhost:8080/api/intakes",
-          intakeData
+          newIntakeData
         );
         setIntakeData(initialIntakeData);
         fetchIntakeList();
-        // Handle successful response
-        console.log(response.data); // Log the response from the backend
       } catch (error) {
         console.error("Error submitting data:", error.message);
       }
     };
+
+    // Date Picker
+  
+    const [intakeDate, setIntakeDate] = useState(
+      new Date() // Set your initial date here
+    );
+  
+    const handleDateChange = (date) => {
+      setIntakeDate(date);
+    };
+    
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(null);
+    const onChange = (dates) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end); };
 
   return (
     <main className="main">
@@ -229,13 +261,26 @@ function FruitIntakePage() {
 
       <h1 className="main__title">add new intake</h1>
 
-      <form className="main__form2 main__form2__row3" onSubmit={handleSubmitIntake}>
+      <form className="main__form2 main__form2__row3" onSubmit={(e) => e.preventDefault()}>
+        
+      <div className="main__box8 box-margin">
+          <label htmlFor="intake_date">
+            <p className="main__label">date</p>
+          </label>
+          <DatePicker
+            selected={intakeDate}
+            onChange={handleDateChange}
+            dateFormat="yyyy-MM-dd"
+            className="main__dropdown--date"
+          />
+        </div>
+
         <div className="main__box7">
-          <label htmlFor="filterDropdownField" />
+          <label htmlFor="filter_dockets" />
           <select
             className="main__dropdown--filter"
-            id="filterDropdownField"
-            name="filterDropdownField"
+            id="filter_dockets"
+            name="filter_dockets"
           >
             <option value="" disabled>
               filter
@@ -249,11 +294,11 @@ function FruitIntakePage() {
         </div>
 
         <div className="main__box7a">
-          <label htmlFor="filterDropdownField" />
+          <label htmlFor="search_dockets" />
           <input
             className="main__dropdown--search"
-            id="filterDropdownField"
-            name="filterDropdownField"
+            id="search_dockets"
+            name="search_dockets"
             placeholder="search"
           />
         </div>
@@ -261,123 +306,77 @@ function FruitIntakePage() {
         <section className="main__dockets">
           {docketList.map((docket) => {
             return (
-              <DocketCard docket={docket}/>
+              <DocketCard key={docket.docket_id} docket={docket} selectedDocket={intakeData.docket_name} onClick={() => handleDocketClick(docket)}/>
             )
           })}
         </section>
 
-        <div className="main__box8 box-margin">
-          <label htmlFor="dropdownField">
-            <p className="main__label">date</p>
-          </label>
-          <select
-            className="main__dropdown--date"
-            id="dropdownField"
-            name="dropdownField"
-            value={intakeData.intake_date} 
-            onChange={handleInputChangeIntake}
-          >
-            <option value="today's date" disabled>
-              01 | 03 | 2024
-            </option>
-            <option value="date1">Date 1</option>
-            <option value="date2">Date 2</option>
-            <option value="date3">Date 3</option>
-          </select>
-        </div>
-
         <div className="main__box9 box-margin">
-          <label htmlFor="dropdownField">
+          <label htmlFor="bins">
             <p className="main__label">bins</p>
           </label>
-          <select
+          <input
             className="main__dropdown"
-            id="dropdownField"
-            name="dropdownField"
+            id="bins"
+            name="bins"
             value={intakeData.bins} 
             onChange={handleInputChangeIntake}
-          >
-            <option value="" disabled />
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-          </select>
+          />
         </div>
 
         <div className="main__box10 box-margin">
-          <label htmlFor="dropdownField">
+          <label htmlFor="total_weight">
             <p className="main__label">total weight</p>
           </label>
           <input
             className="main__dropdown"
-            id="dropdownField"
-            name="dropdownField"
+            id="total_weight"
+            name="total_weight"
             value={intakeData.total_weight} 
             onChange={handleInputChangeIntake}
           />
         </div>
 
         <div className="main__box11 box-margin">
-          <label htmlFor="dropdownField">
+          <label htmlFor="tare_weight">
             <p className="main__label">tare weight</p>
           </label>
           <input
             className="main__dropdown"
-            id="dropdownField"
-            name="dropdownField"
+            id="tare_weight"
+            name="tare_weight"
             value={intakeData.tare_weight} 
             onChange={handleInputChangeIntake}
           />
           </div>
 
-        <button className="main__button2" type="submit">add intake</button>
+        <button className="main__button2" type="submit" onClick={handleSubmitIntake}>add intake</button>
       </form>
 
       <h1 className="main__title">fruit intake report</h1>
 
       <section className="main__section">
         <div className="main__box13">
-          <label htmlFor="dropdownField">
-            <p className="main__label">from</p>
+          <label htmlFor="date_range">
+            <p className="main__label">date range</p>
           </label>
-          <select
-            className="main__dropdown--date"
-            id="dropdownField"
-            name="dropdownField"
-          >
-            <option value="today's date" disabled>
-              01 | 03 | 2024
-            </option>
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-          </select>
+          <DatePicker
+              selected={startDate}
+              onChange={onChange}
+              startDate={startDate}
+              endDate={endDate}
+              selectsRange
+              dateFormat="yyyy | MM | dd"
+              className="main__dropdown--date"
+          />
         </div>
 
         <div className="main__box14">
-          <label htmlFor="dropdownField">
-            <p className="main__label">to</p>
-          </label>
-          <select
-            className="main__dropdown--date"
-            id="dropdownField"
-            name="dropdownField"
-          >
-            <option value="today's date" disabled>
-              01 | 03 | 2024
-            </option>
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-          </select>
-        </div>
-
-        <div className="main__box15">
-          <label htmlFor="filterDropdownField" />
+          <label htmlFor="filter_intake" />
           <select
             className="main__dropdown--filter"
-            id="filterDropdownField"
-            name="filterDropdownField"
+            id="filter_intake"
+            name="filter_intake"
           >
             <option value="" disabled>
               filter
@@ -390,20 +389,25 @@ function FruitIntakePage() {
           </select>
         </div>
 
-        <div className="main__box16">
-          <label htmlFor="filterDropdownField" />
+        <div className="main__box15">
+          <label htmlFor="search_intake" />
           <input
             className="main__dropdown--search"
-            id="filterDropdownField"
-            name="filterDropdownField"
+            id="search_intake"
+            name="search_intake"
             placeholder="search"
           />
         </div>
 
         <section className="main__intakes">
-          {intakeList.map((intake) => {
+          {intakeList
+          .filter((intake) => { if (!endDate) return true;
+              const intakeDate = new Date(intake.intake_date);
+              return intakeDate >= startDate && intakeDate <= endDate;
+            })
+            .map((intake) => {
             return (
-              <IntakeCard intake={intake}/>
+              <IntakeCard key={intake.intake_id} intake={intake} />
             )
           })}
         </section>
