@@ -18,6 +18,7 @@ function FruitIntakePage() {
     try {
       const response = await axios.get(`http://localhost:8080/api/dockets`);
       setDocketList(response.data);
+      console.log ("docketList data",response.data)
     } catch (error) {
       console.error(error);
     }
@@ -39,6 +40,12 @@ function FruitIntakePage() {
   const [docketData, setDocketData] = useState(initialDocketData);
   const [docketList, setDocketList] = useState([]);
   const [intakeDate, setIntakeDate] = useState(new Date());
+  const [selectedDocket, setSelectedDocket] = useState("");
+
+  const handleSelectedDocketChange = (docket_name) => {
+    setSelectedDocket(docket_name);
+    console.log("look at me", docket_name)
+  }
 
   const handleInputChangeDocket = (e) => {
     const { name, value } = e.target;
@@ -60,12 +67,6 @@ function FruitIntakePage() {
     } catch (error) {
       console.error("Error submitting data:", error.message);
     }
-  };
-
-  // Handle Docket Click
-
-  const handleDocketClick = (docket) => {
-    setIntakeData(Object.assign({}, initialIntakeData, docket));
   };
 
   // Intake API Request
@@ -105,7 +106,9 @@ function FruitIntakePage() {
   const handleSubmitIntake = async (e) => {
     e.preventDefault();
 
-    const newIntakeData = Object.assign({}, intakeData);
+    const docketData = docketList.find((el) => el.docket_name === selectedDocket)
+    
+    const newIntakeData = Object.assign({}, intakeData, docketData);
     newIntakeData.intake_date = new Date(intakeDate).toISOString().slice(0, 10);
 
     console.log("submitting intake");
@@ -115,6 +118,7 @@ function FruitIntakePage() {
         "http://localhost:8080/api/intakes",
         newIntakeData
       );
+      setSelectedDocket("");
       setIntakeData(initialIntakeData);
       fetchIntakeList();
       console.log(response.data)
@@ -129,9 +133,9 @@ function FruitIntakePage() {
     setIntakeDate(date);
   };
 
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState(null);
-  const onChange = (dates) => {
+  const onDateChange = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
@@ -162,7 +166,7 @@ const searchDocketCards = (query) => {
     // Otherwise, filter based on the search query
     const searched = docketList.filter((docket) =>
       docket.docket_name.includes(query) ||
-      (typeof docket.vintage === 'object' && docket.vintage.hasOwnProperty(query)) ||
+      docket.vintage.toString().includes(query) ||
       docket.grower.includes(query) ||
       docket.varietal.includes(query) ||
       docket.vineyard.includes(query) ||
@@ -194,8 +198,14 @@ if (query.trim() === '') {
 } else {
   // Otherwise, filter based on the search query
   const searched = intakeList.filter((intake) =>
-    (typeof intake.intake_id === 'object' && intake.intake_id.hasOwnProperty(query)) ||
-    intake.docket_name.includes(query)
+    intake.intake_id.toString().includes(query) ||
+    intake.docket_name.includes(query) ||
+    intake.vintage.toString().includes(query) ||
+    intake.grower.includes(query) ||
+    intake.varietal.includes(query) ||
+    intake.vineyard.includes(query) ||
+    intake.block.includes(query) ||
+    intake.row.includes(query)
   );
   setSearchedIntakeCards(searched);
 }
@@ -373,15 +383,15 @@ useEffect(() => {
 
         <section className="main__dockets">
           {searchedDocketCards.map((docket) => {
-            // if (docketList.docket_id !== intakeList.docket_id) // TODO
+            if (!intakeList.find(el => el.docket_name === docket.docket_name)) {
             return (
               <DocketCard
                 key={docket.docket_id}
                 docket={docket}
-                selectedDocket={docketData.docket_name}
-                onClick={() => handleDocketClick(docket)}
+                selectedDocket={selectedDocket}
+                onClick={() => handleSelectedDocketChange(docket.docket_name)}
               />
-            );
+            );}
           })}
         </section>
 
@@ -442,7 +452,7 @@ useEffect(() => {
           </label>
           <DatePicker
             selected={startDate}
-            onChange={onChange}
+            onChange={onDateChange}
             startDate={startDate}
             endDate={endDate}
             selectsRange
