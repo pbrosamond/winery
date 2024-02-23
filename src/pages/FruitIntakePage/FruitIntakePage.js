@@ -9,7 +9,7 @@ import "./FruitIntakePage.scss";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const { REACT_APP_API_BASE_PATH } = process.env;
+// const { REACT_APP_API_BASE_PATH } = process.env;
 
 function FruitIntakePage() {
   // Docket API Request
@@ -38,6 +38,7 @@ function FruitIntakePage() {
 
   const [docketData, setDocketData] = useState(initialDocketData);
   const [docketList, setDocketList] = useState([]);
+  const [intakeDate, setIntakeDate] = useState(new Date());
 
   const handleInputChangeDocket = (e) => {
     const { name, value } = e.target;
@@ -116,16 +117,13 @@ function FruitIntakePage() {
       );
       setIntakeData(initialIntakeData);
       fetchIntakeList();
+      console.log(response.data)
     } catch (error) {
       console.error("Error submitting data:", error.message);
     }
   };
 
   // Date Picker
-
-  const [intakeDate, setIntakeDate] = useState(
-    new Date() // Set your initial date here
-  );
 
   const handleDateChange = (date) => {
     setIntakeDate(date);
@@ -152,14 +150,15 @@ const handleDocketSearchChange = (event) => {
   const query = event.target.value;
   setDocketSearchQuery(query);
   // Call a function to filter docket cards based on the search query
-  filterDocketCards(query);
+  searchDocketCards(query);
 };
 
-const filterDocketCards = (query) => {
+const searchDocketCards = (query) => {
   // If the search query is empty, show all dockets
   if (query.trim() === '') {
     setSearchedDocketCards(docketList);
-  } else {
+    console.log("docket list", docketList)
+  } else { console.log("docket list else", docketList)
     // Otherwise, filter based on the search query
     const searched = docketList.filter((docket) =>
       docket.docket_name.includes(query) ||
@@ -175,7 +174,7 @@ const filterDocketCards = (query) => {
 };
 
 useEffect(() => {
-  filterDocketCards(docketSearchQuery);
+  searchDocketCards(docketSearchQuery);
 }, [docketSearchQuery, docketList]);
 
 // Search Bar Intakes
@@ -185,10 +184,10 @@ const handleIntakeSearchChange = (event) => {
 const query = event.target.value;
   setIntakeSearchQuery(query);
 // Call a function to filter docket cards based on the search query
-filterIntakeCards(query);
+searchIntakeCards(query);
 };
 
-const filterIntakeCards = (query) => {
+const searchIntakeCards = (query) => {
 // If the search query is empty, show all intakes
 if (query.trim() === '') {
   setSearchedIntakeCards(intakeList);
@@ -203,7 +202,7 @@ if (query.trim() === '') {
 };
 
 useEffect(() => {
-  filterIntakeCards(intakeSearchQuery);
+  searchIntakeCards(intakeSearchQuery);
 }, [intakeSearchQuery, intakeList]);
 
   return (
@@ -374,6 +373,7 @@ useEffect(() => {
 
         <section className="main__dockets">
           {searchedDocketCards.map((docket) => {
+            // if (docketList.docket_id !== intakeList.docket_id) // TODO
             return (
               <DocketCard
                 key={docket.docket_id}

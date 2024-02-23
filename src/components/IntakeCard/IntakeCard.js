@@ -9,7 +9,7 @@ function IntakeCard({intake}) {
     return (
         <section className='intake__subcontainer'>
         <div className='intake__intake--border'>
-          <h2 className='intake__text'>intake 1</h2>
+          <h2 className='intake__text'>intake {intake.intake_id}</h2>
           <h2 className='intake__text'>{formatDate(intake.intake_date)}</h2>
         </div>
 
@@ -26,22 +26,22 @@ function IntakeCard({intake}) {
 
           <div className='intake__intake'>
             <p className='intake__details'>total weight</p>
-            <p className='intake__details--right'>{intake.total_weight}</p>
+            <p className='intake__details--right'>{intake.total_weight} kg</p>
           </div>
 
           <div className='intake__intake'>
             <p className='intake__details'>tare weight</p>
-            <p className='intake__details--right'>{intake.tare_weight}</p>
+            <p className='intake__details--right'>{intake.tare_weight} kg</p>
           </div>
 
           <div className='intake__intake'>
             <p className='intake__details'>fruit weight</p>
-            <p className='intake__details--right'>{intake.fruit_weight}</p>
+            <p className='intake__details--right'>{intake.fruit_weight} kg</p>
           </div>
 
           <div className='intake__intake'>
             <p className='intake__details'>predicted volume</p>
-            <p className='intake__details--right'>{intake.predicted_volume}</p>
+            <p className='intake__details--right'>{intake.predicted_volume} L</p>
           </div>
         </section>
 
