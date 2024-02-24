@@ -92,7 +92,7 @@
             background-size: 0.8rem;
         }
 
-        &--filter {
+        &--sort {
             @include dropdown;
             @include input;
             appearance: none;

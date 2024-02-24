@@ -43,7 +43,7 @@ function FruitIntakePage() {
 
   const handleSelectedDocketChange = (docket_name) => {
     setSelectedDocket(docket_name);
-  }
+  };
 
   const handleInputChangeDocket = (e) => {
     const { name, value } = e.target;
@@ -102,8 +102,10 @@ function FruitIntakePage() {
   const handleSubmitIntake = async (e) => {
     e.preventDefault();
 
-    const docketData = docketList.find((el) => el.docket_name === selectedDocket)
-    
+    const docketData = docketList.find(
+      (el) => el.docket_name === selectedDocket
+    );
+
     const newIntakeData = Object.assign({}, intakeData, docketData);
     newIntakeData.intake_date = new Date(intakeDate).toISOString().slice(0, 10);
 
@@ -142,70 +144,108 @@ function FruitIntakePage() {
   const [intakeSearchQuery, setIntakeSearchQuery] = useState("");
   const [searchedIntakeCards, setSearchedIntakeCards] = useState(intakeList);
 
-// Function to handle search input change
-const handleDocketSearchChange = (event) => {
-  const query = event.target.value;
-  setDocketSearchQuery(query);
-  // Call a function to filter docket cards based on the search query
-  searchDocketCards(query);
-};
+  // Function to handle search input change
+  const handleDocketSearchChange = (event) => {
+    const query = event.target.value;
+    setDocketSearchQuery(query);
+    // Call a function to filter docket cards based on the search query
+    searchDocketCards(query);
+  };
 
-const searchDocketCards = (query) => {
-  // If the search query is empty, show all dockets
-  if (query.trim() === '') {
-    setSearchedDocketCards(docketList);
-  } else {
-    // Otherwise, filter based on the search query
-    const searched = docketList.filter((docket) =>
-      docket.docket_name.includes(query) ||
-      docket.vintage.toString().includes(query) ||
-      docket.grower.includes(query) ||
-      docket.varietal.includes(query) ||
-      docket.vineyard.includes(query) ||
-      docket.block.includes(query) ||
-      docket.row.includes(query)
-    );
-    setSearchedDocketCards(searched);
-  }
-};
+  const searchDocketCards = (query) => {
+    // If the search query is empty, show all dockets
+    if (query.trim() === "") {
+      setSearchedDocketCards(docketList);
+    } else {
+      // Otherwise, filter based on the search query
+      const searched = docketList.filter(
+        (docket) =>
+          docket.docket_name.includes(query) ||
+          docket.vintage.toString().includes(query) ||
+          docket.grower.includes(query) ||
+          docket.varietal.includes(query) ||
+          docket.vineyard.includes(query) ||
+          docket.block.includes(query) ||
+          docket.row.includes(query)
+      );
+      setSearchedDocketCards(searched);
+    }
+  };
 
-useEffect(() => {
-  searchDocketCards(docketSearchQuery);
-}, [docketSearchQuery, docketList]);
+  useEffect(() => {
+    searchDocketCards(docketSearchQuery);
+  }, [docketSearchQuery, docketList]);
 
-// Search Bar Intakes
+  // Search Bar Intakes
 
-// Function to handle search input change
-const handleIntakeSearchChange = (event) => {
-const query = event.target.value;
-  setIntakeSearchQuery(query);
-// Call a function to filter docket cards based on the search query
-searchIntakeCards(query);
-};
+  // Function to handle search input change
+  const handleIntakeSearchChange = (event) => {
+    const query = event.target.value;
+    setIntakeSearchQuery(query);
+    // Call a function to filter docket cards based on the search query
+    searchIntakeCards(query);
+  };
 
-const searchIntakeCards = (query) => {
-// If the search query is empty, show all intakes
-if (query.trim() === '') {
-  setSearchedIntakeCards(intakeList);
-} else {
-  // Otherwise, filter based on the search query
-  const searched = intakeList.filter((intake) =>
-    intake.intake_id.toString().includes(query) ||
-    intake.docket_name.includes(query) ||
-    intake.vintage.toString().includes(query) ||
-    intake.grower.includes(query) ||
-    intake.varietal.includes(query) ||
-    intake.vineyard.includes(query) ||
-    intake.block.includes(query) ||
-    intake.row.includes(query)
-  );
-  setSearchedIntakeCards(searched);
-}
-};
+  const searchIntakeCards = (query) => {
+    // If the search query is empty, show all intakes
+    if (query.trim() === "") {
+      setSearchedIntakeCards(intakeList);
+    } else {
+      // Otherwise, filter based on the search query
+      const searched = intakeList.filter(
+        (intake) =>
+          intake.intake_id.toString().includes(query) ||
+          intake.docket_name.includes(query) ||
+          intake.vintage.toString().includes(query) ||
+          intake.grower.includes(query) ||
+          intake.varietal.includes(query) ||
+          intake.vineyard.includes(query) ||
+          intake.block.includes(query) ||
+          intake.row.includes(query)
+      );
+      setSearchedIntakeCards(searched);
+    }
+  };
 
-useEffect(() => {
-  searchIntakeCards(intakeSearchQuery);
-}, [intakeSearchQuery, intakeList]);
+  useEffect(() => {
+    searchIntakeCards(intakeSearchQuery);
+  }, [intakeSearchQuery, intakeList]);
+
+  // Sort Functionality
+
+  const [docketSortOrder, setDocketSortOrder] = useState("asc");
+  const [docketSortKey, setDocketSortKey] = useState("docket_name");
+
+  const [intakeSortOrder, setIntakeSortOrder] = useState("asc");
+  const [intakeSortKey, setIntakeSortKey] = useState("intake_id");
+
+  // Dockets Sorting Logic
+  const sortedDockets = [...searchedDocketCards].sort((a, b) => {
+    const valueA = a[docketSortKey];
+    const valueB = b[docketSortKey];
+
+    if (valueA < valueB) {
+      return docketSortOrder === "asc" ? -1 : 1;
+    } else if (valueA > valueB) {
+      return docketSortOrder === "asc" ? 1 : -1;
+    } else {
+      return 0;
+    }
+  });
+
+  // Intakes Sorting Logic
+  const sortedIntakes = [...searchedIntakeCards].sort((a, b) => {
+    const valueA = a[intakeSortKey];
+    const valueB = b[intakeSortKey];
+
+    if (valueA < valueB) {
+      return intakeSortOrder === "asc" ? -1 : 1;
+    } else if (valueA > valueB) {
+      return intakeSortOrder === "asc" ? 1 : -1;
+    } else {
+      return 0;
+    }
+  });
 
   return (
     <main className="main">
@@ -344,20 +384,27 @@ useEffect(() => {
         </div>
 
         <div className="main__box7">
-          <label htmlFor="filter_dockets" />
+          <label htmlFor="sort_dockets" />
           <select
-            className="main__dropdown--filter"
-            id="filter_dockets"
-            name="filter_dockets"
+            className="main__dropdown--sort"
+            id="sort_dockets"
+            name="sort_dockets"
+            value={docketSortKey}
+            onChange={(e) => {
+              setDocketSortKey(e.target.value);
+              setDocketSortOrder("asc"); // Reset order when changing the key
+            }}
           >
             <option value="" disabled>
-              filter
+              Sort by
             </option>
-            <option value="all">All</option>
-            <option value="item1">Item 1</option>
-            <option value="item2">Item 2</option>
-            <option value="item3">Item 3</option>
-            <option value="item4">Item 4</option>
+            <option value="docket_name">docket</option>
+            <option value="vintage">vintage</option>
+            <option value="grower">grower</option>
+            <option value="varietal">varietal</option>
+            <option value="vineyard">vineyard</option>
+            <option value="block">block</option>
+            <option value="row">row</option>
           </select>
         </div>
 
@@ -374,17 +421,24 @@ useEffect(() => {
         </div>
 
         <section className="main__dockets">
-          {searchedDocketCards.map((docket) => {
-            if (!intakeList.find(el => el.docket_name === docket.docket_name)) {
-            return (
-              <DocketCard
-                key={docket.docket_id}
-                docket={docket}
-                selectedDocket={selectedDocket}
-                onClick={() => handleSelectedDocketChange(docket.docket_name)}
-              />
-            );}
-          })}
+          {(sortedDockets.length > 0 ? sortedDockets : searchedDocketCards).map(
+            (docket) => {
+              if (
+                !intakeList.find((el) => el.docket_name === docket.docket_name)
+              ) {
+                return (
+                  <DocketCard
+                    key={docket.docket_id}
+                    docket={docket}
+                    selectedDocket={selectedDocket}
+                    onClick={() =>
+                      handleSelectedDocketChange(docket.docket_name)
+                    }
+                  />
+                );
+              }
+            }
+          )}
         </section>
 
         <div className="main__box9 box-margin">
@@ -454,20 +508,33 @@ useEffect(() => {
         </div>
 
         <div className="main__box14">
-          <label htmlFor="filter_intake" />
+          <label htmlFor="sort_intake" />
           <select
-            className="main__dropdown--filter"
-            id="filter_intake"
-            name="filter_intake"
+            className="main__dropdown--sort"
+            id="sort_intake"
+            name="sort_intake"
+            value={intakeSortKey}
+            onChange={(e) => {
+              setIntakeSortKey(e.target.value);
+              setIntakeSortOrder("asc"); // Reset order when changing the key
+            }}
           >
             <option value="" disabled>
-              filter
+              Sort by
             </option>
-            <option value="all">All</option>
-            <option value="item1">Item 1</option>
-            <option value="item2">Item 2</option>
-            <option value="item3">Item 3</option>
-            <option value="item4">Item 4</option>
+            <option value="intake_id">intake</option>
+            <option value="docket_name">docket</option>
+            <option value="vintage">vintage</option>
+            <option value="grower">grower</option>
+            <option value="varietal">varietal</option>
+            <option value="vineyard">vineyard</option>
+            <option value="block">block</option>
+            <option value="row">row</option>
+            <option value="bins">bins</option>
+            <option value="total_weight">total weight</option>
+            <option value="tare_weight">tare weight</option>
+            <option value="fruit_weight">fruit weight</option>
+            <option value="predicted_volume">predicted volume</option>
           </select>
         </div>
 
@@ -484,7 +551,7 @@ useEffect(() => {
         </div>
 
         <section className="main__intakes">
-          {searchedIntakeCards
+          {(sortedIntakes.length > 0 ? sortedIntakes : searchedIntakeCards)
             .filter((intake) => {
               if (!endDate) return true;
               const intakeDate = new Date(intake.intake_date);
