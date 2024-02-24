@@ -18,7 +18,6 @@ function FruitIntakePage() {
     try {
       const response = await axios.get(`http://localhost:8080/api/dockets`);
       setDocketList(response.data);
-      console.log ("docketList data",response.data)
     } catch (error) {
       console.error(error);
     }
@@ -44,7 +43,6 @@ function FruitIntakePage() {
 
   const handleSelectedDocketChange = (docket_name) => {
     setSelectedDocket(docket_name);
-    console.log("look at me", docket_name)
   }
 
   const handleInputChangeDocket = (e) => {
@@ -63,7 +61,6 @@ function FruitIntakePage() {
       setDocketData(initialDocketData);
       fetchDocketList();
       // Handle successful response
-      console.log(response.data); // Log the response from the backend
     } catch (error) {
       console.error("Error submitting data:", error.message);
     }
@@ -99,7 +96,6 @@ function FruitIntakePage() {
 
   const handleInputChangeIntake = (e) => {
     const { name, value } = e.target;
-    console.log("name and value", name, value);
     setIntakeData({ ...intakeData, [name]: value });
   };
 
@@ -111,8 +107,6 @@ function FruitIntakePage() {
     const newIntakeData = Object.assign({}, intakeData, docketData);
     newIntakeData.intake_date = new Date(intakeDate).toISOString().slice(0, 10);
 
-    console.log("submitting intake");
-    console.log("intake data", newIntakeData);
     try {
       const response = await axios.post(
         "http://localhost:8080/api/intakes",
@@ -121,7 +115,6 @@ function FruitIntakePage() {
       setSelectedDocket("");
       setIntakeData(initialIntakeData);
       fetchIntakeList();
-      console.log(response.data)
     } catch (error) {
       console.error("Error submitting data:", error.message);
     }
@@ -161,8 +154,7 @@ const searchDocketCards = (query) => {
   // If the search query is empty, show all dockets
   if (query.trim() === '') {
     setSearchedDocketCards(docketList);
-    console.log("docket list", docketList)
-  } else { console.log("docket list else", docketList)
+  } else {
     // Otherwise, filter based on the search query
     const searched = docketList.filter((docket) =>
       docket.docket_name.includes(query) ||
@@ -400,7 +392,7 @@ useEffect(() => {
             <p className="main__label">bins</p>
           </label>
           <input
-            className="main__dropdown"
+            className="main__dropdown--text"
             id="bins"
             name="bins"
             value={intakeData.bins}
@@ -413,7 +405,7 @@ useEffect(() => {
             <p className="main__label">total weight</p>
           </label>
           <input
-            className="main__dropdown"
+            className="main__dropdown--text"
             id="total_weight"
             name="total_weight"
             value={intakeData.total_weight}
@@ -426,7 +418,7 @@ useEffect(() => {
             <p className="main__label">tare weight</p>
           </label>
           <input
-            className="main__dropdown"
+            className="main__dropdown--text"
             id="tare_weight"
             name="tare_weight"
             value={intakeData.tare_weight}
@@ -457,7 +449,7 @@ useEffect(() => {
             endDate={endDate}
             selectsRange
             dateFormat="yyyy | MM | dd"
-            className="main__dropdown--date"
+            className="main__dropdown--date range"
           />
         </div>
 
