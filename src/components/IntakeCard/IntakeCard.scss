@@ -49,13 +49,13 @@
         @include pop-up;
 
         &--text {
-            @include h1;
+            @include h1;            
         }
       }
 
-      &__overlay {
+    &__overlay {
         @include overlay;
-      }
+    }
 
     &__buttons {
         @include flexbox(row, 2rem);
