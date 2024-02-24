@@ -44,4 +44,43 @@
         align-items: flex-end;
         height: inherit;
     }
+
+    &__delete {
+        @include pop-up;
+
+        &--text {
+            @include h1;
+        }
+      }
+
+      &__overlay {
+        @include overlay;
+      }
+
+    &__buttons {
+        @include flexbox(row, 2rem);
+    }
+
+    &__button {
+
+        &--delete {
+            @include button;
+            background: $color-red;
+
+            &:hover {
+                background: $color-darkred;
+            }
+        }
+
+        &--cancel {
+            @include button;
+            background: $color-white;
+            border: .0625rem solid $color-grey;
+            color: $color-black;
+
+            &:hover {
+                background: $color-cloud;
+            }
+        }
+    }
 }
