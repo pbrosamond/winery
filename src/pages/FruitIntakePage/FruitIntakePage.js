@@ -223,6 +223,7 @@ function FruitIntakePage() {
   const sortedDockets = [...searchedDocketCards].sort((a, b) => {
     const valueA = a[docketSortKey];
     const valueB = b[docketSortKey];
+    console.log(docketSortKey, valueA, valueB);
 
     if (valueA < valueB) {
       return docketSortOrder === "asc" ? -1 : 1;
@@ -558,7 +559,14 @@ function FruitIntakePage() {
               return intakeDate >= startDate && intakeDate <= endDate;
             })
             .map((intake) => {
-              return <IntakeCard key={intake.intake_id} intake={intake} />;
+              return (
+                <IntakeCard
+                  key={intake.intake_id}
+                  intake={intake}
+                  fetchIntakeList={fetchIntakeList}
+                  fetchDocketList={fetchDocketList}
+                />
+              );
             })}
         </section>
 

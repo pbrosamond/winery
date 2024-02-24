@@ -171,6 +171,7 @@
   @include flexbox(column, 2rem);
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 
 @mixin overlay {

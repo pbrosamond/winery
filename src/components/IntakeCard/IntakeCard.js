@@ -4,39 +4,55 @@ import editIcon from "../../assets/icons/editIcon.svg";
 import deleteIcon from "../../assets/icons/deleteIcon.svg";
 
 import formatDate from "../../utils/formatDate";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import axios from "axios";
 
-function IntakeCard({ intake }) {
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
+  const [showIntakeDeleteConfirmation, setShowIntakeDeleteConfirmation] =
+    useState(false);
   const [showDocketDeleteConfirmation, setShowDocketDeleteConfirmation] =
     useState(false);
 
   const handleDeleteClick = () => {
-    setShowDeleteConfirmation(true);
+    setShowIntakeDeleteConfirmation(true);
+    setShowDocketDeleteConfirmation(false);
   };
 
-  const handleDeleteConfirmation = (confirmed) => {
-    if (confirmed) {
-      // Show the second delete confirmation for the corresponding docket
-      setShowDocketDeleteConfirmation(true);
+  const handleIntakeDeleteConfirmation = async (deleted) => {
+    if (deleted) {
+      try {
+        // Make delete API call for intake
+        await axios.delete(
+          `http://localhost:8080/api/intakes/${intake.intake_id}`
+        );
+        setShowIntakeDeleteConfirmation(false);
+        setShowDocketDeleteConfirmation(true);
+      } catch (error) {
+        console.error("Error deleting intake:", error);
+      }
     } else {
       // Close both delete confirmation pop-ups
-      setShowDeleteConfirmation(false);
-      setShowDocketDeleteConfirmation(false);
+      setShowIntakeDeleteConfirmation(false);
     }
   };
 
-  const handleDocketDeleteConfirmation = (confirmed) => {
-    if (confirmed) {
-      // Perform delete action for both intake and corresponding docket here
-      console.log(
-        `Intake ID ${intake.intake_id} and corresponding docket will be deleted.`
-      );
+  const handleDocketDeleteConfirmation = async (deleted) => {
+    if (deleted) {
+      try {
+        // Make delete API call for docket
+        await axios.delete(
+          `http://localhost:8080/api/dockets/${intake.docket_id}`
+        );
+        setShowDocketDeleteConfirmation(false);
+        fetchDocketList();
+      } catch (error) {
+        console.error("Error deleting docket:", error);
+      }
+    } else {
+      // Close both delete confirmation pop-ups
+      setShowDocketDeleteConfirmation(false);   
     }
-
-    // Close both delete confirmation pop-ups
-    setShowDeleteConfirmation(false);
-    setShowDocketDeleteConfirmation(false);
+    fetchIntakeList();
   };
 
   return (
@@ -88,9 +104,9 @@ function IntakeCard({ intake }) {
         />
       </section>
 
-      {showDeleteConfirmation && <div className="intake__overlay" />}
+      {showIntakeDeleteConfirmation && <div className="intake__overlay" />}
 
-      {showDeleteConfirmation && (
+      {showIntakeDeleteConfirmation && (
         <div className="intake__delete">
           <p className="intake__delete--text">
             do you want to delete intake {intake.intake_id}?
@@ -98,13 +114,13 @@ function IntakeCard({ intake }) {
           <div className="intake__buttons">
             <button
               className="intake__button--delete"
-              onClick={() => handleDeleteConfirmation(true)}
+              onClick={() => handleIntakeDeleteConfirmation(true)}
             >
               delete
             </button>
             <button
               className="intake__button--cancel"
-              onClick={() => handleDeleteConfirmation(false)}
+              onClick={() => handleIntakeDeleteConfirmation(false)}
             >
               cancel
             </button>
