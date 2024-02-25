@@ -25,6 +25,21 @@
         }
     }
 
+    &__edit {
+        text-align: end;
+        background: none;
+        border: none;
+        outline: .0625rem solid $color-grey;
+    }
+
+    &__calculated {
+        text-align: end;
+        background: none;
+        border: none;
+    }
+
+
+
     &__text {
         @include h2;
     }
@@ -43,6 +58,17 @@
         justify-content: space-between;
         align-items: flex-end;
         height: inherit;
+    }
+
+    &__icon {
+
+        &--cancel {
+            height: 1.25rem;
+        }
+
+        &--delete {
+            height: 1.5625rem;
+        }
     }
 
     &__delete {
@@ -69,6 +95,15 @@
 
             &:hover {
                 background: $color-darkred;
+            }
+        }
+
+        &--save {
+            @include button;
+            background: $gradient-purple;
+
+            &:hover {
+                background: $gradient-darkpurple;
             }
         }
 

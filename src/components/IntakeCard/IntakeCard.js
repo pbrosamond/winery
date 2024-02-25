@@ -10,7 +10,6 @@ import React, { useState } from "react";
 import axios from "axios";
 
 function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
-
   const [showIntakeDeleteConfirmation, setShowIntakeDeleteConfirmation] =
     useState(false);
   const [showDocketDeleteConfirmation, setShowDocketDeleteConfirmation] =
@@ -23,6 +22,7 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
 
   const [editMode, setEditMode] = useState(false);
   const [editedValues, setEditedValues] = useState({});
+  const [showSaveConfirmation, setShowSaveConfirmation] = useState(false);
 
   const handleEditClick = () => {
     setEditMode(true);
@@ -30,27 +30,52 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
       docket_name: intake.docket_name,
       bins: intake.bins,
       total_weight: intake.total_weight,
-      tare_weight: intake.tare_weight
+      tare_weight: intake.tare_weight,
     });
   };
 
-  const handleSaveClick = async () => {
-    // Make patch/put API call for intake
-    try {
-      await axios.patch(
-        `http://localhost:8080/api/intakes/${intake.intake_id}`,
-        editedValues
-      );
-      setEditMode(false);
-      fetchIntakeList();
-    } catch (error) {
-      console.error("Error updating intake:", error);
-    }
+  const handleSaveClick = () => {
+    setShowSaveConfirmation(true);
   };
 
+  const handleChange = (field, value) => {
+    setEditedValues({ ...editedValues, [field]: value });
+  };
+
+  const handleSaveConfirmation = async (confirmed) => {
+    if (confirmed) {
+      // Save changes logic
+      const updatedValues = {
+        ...editedValues,
+        fruit_weight: editedValues.total_weight - editedValues.tare_weight,
+        predicted_volume:
+          (editedValues.total_weight - editedValues.tare_weight) * 0.75,
+      };
+  
+      try {
+        await axios.patch(
+          `http://localhost:8080/api/intakes/${intake.intake_id}`,
+          updatedValues
+        );
+        setEditMode(false);
+        setShowSaveConfirmation(false);
+        fetchIntakeList();
+      } catch (error) {
+        console.error("Error updating intake:", error);
+      }
+    } else {
+      // Cancel changes
+      setEditMode(false);
+      setEditedValues({}); // Reset edited values
+      setShowSaveConfirmation(false);
+    }
+  };
+  
   const handleCancelClick = () => {
     setEditMode(false);
-    // Optionally reset edited values if needed
+    setEditedValues({}); // Reset edited values
+    setShowSaveConfirmation(false);
+    // Optionally reset other values or perform additional actions
   };
 
   const handleIntakeDeleteConfirmation = async (deleted) => {
@@ -102,10 +127,14 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
           <p className="intake__details">docket</p>
           {editMode ? (
             <input
+              className="intake__edit"
               type="text"
               value={editedValues.docket_name}
               onChange={(e) =>
-                setEditedValues({ ...editedValues, docket_name: e.target.value })
+                setEditedValues({
+                  ...editedValues,
+                  docket_name: e.target.value,
+                })
               }
               placeholder={intake.docket_name}
             />
@@ -118,9 +147,10 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
           <p className="intake__details">bins</p>
           {editMode ? (
             <input
+              className="intake__edit"
               type="text"
               value={editedValues.bins}
-              onChange={(e) => handleChange('bins', e.target.value)}
+              onChange={(e) => handleChange("bins", e.target.value)}
               placeholder={intake.bins}
             />
           ) : (
@@ -132,9 +162,10 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
           <p className="intake__details">total weight</p>
           {editMode ? (
             <input
+              className="intake__edit"
               type="text"
               value={editedValues.total_weight}
-              onChange={(e) => handleChange('total_weight', e.target.value)}
+              onChange={(e) => handleChange("total_weight", e.target.value)}
               placeholder={intake.total_weight}
             />
           ) : (
@@ -146,9 +177,10 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
           <p className="intake__details">tare weight</p>
           {editMode ? (
             <input
+              className="intake__edit"
               type="text"
               value={editedValues.tare_weight}
-              onChange={(e) => handleChange('tare_weight', e.target.value)}
+              onChange={(e) => handleChange("tare_weight", e.target.value)}
               placeholder={intake.tare_weight}
             />
           ) : (
@@ -158,12 +190,44 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
 
         <div className="intake__intake">
           <p className="intake__details">fruit weight</p>
-          <p className="intake__details--right">{intake.fruit_weight} kg</p>
+          {editMode ? (
+            <input
+              className="intake__calculated"
+              type="text"
+              value={editedValues.fruit_weight}
+              onChange={(e) =>
+                setEditedValues({
+                  ...editedValues,
+                  fruit_weight: e.target.value,
+                  predicted_volume: e.target.value * 0.75,
+                })
+              }
+            />
+          ) : (
+            <p className="intake__details--right">{intake.fruit_weight} kg</p>
+          )}
         </div>
 
         <div className="intake__intake">
           <p className="intake__details">predicted volume</p>
-          <p className="intake__details--right">{intake.predicted_volume} L</p>
+          {editMode ? (
+            <input
+              className="intake__calculated"
+              type="text"
+              value={editedValues.predicted_volume}
+              onChange={(e) =>
+                setEditedValues({
+                  ...editedValues,
+                  predicted_volume: e.target.value,
+                  fruit_weight: e.target.value / 0.75,
+                })
+              }
+            />
+          ) : (
+            <p className="intake__details--right">
+              {intake.predicted_volume} L
+            </p>
+          )}
         </div>
       </section>
 
@@ -171,13 +235,13 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
       {editMode ? (
           <>
             <img
-              className="intake_icon"
+              className="intake__icon"
               src={saveIcon}
               alt="Save Icon"
               onClick={handleSaveClick}
             />
             <img
-              className="intake_icon"
+              className="intake__icon--cancel"
               src={cancelIcon}
               alt="Cancel Icon"
               onClick={handleCancelClick}
@@ -186,13 +250,13 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
         ) : (
           <>
             <img
-              className="intake_icon"
+              className="intake__icon"
               src={editIcon}
               alt="Edit Icon"
               onClick={handleEditClick}
             />
             <img
-              className="intake_icon"
+              className="intake__icon--delete"
               src={deleteIcon}
               alt="Delete Icon"
               onClick={handleDeleteClick}
@@ -242,6 +306,30 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
               onClick={() => handleDocketDeleteConfirmation(false)}
             >
               keep docket
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showSaveConfirmation && <div className="intake__overlay" />}
+
+      {showSaveConfirmation && (
+        <div className="intake__delete">
+          <p className="intake__delete--text">
+            Would you like to save your changes for intake {intake.intake_id}?
+          </p>
+          <div className="intake__buttons">
+            <button
+              className="intake__button--save"
+              onClick={() => handleSaveConfirmation(true)}
+            >
+              save
+            </button>
+            <button
+              className="intake__button--cancel"
+              onClick={() => handleSaveConfirmation(false)}
+            >
+              cancel
             </button>
           </div>
         </div>
