@@ -9,7 +9,7 @@ import formatDate from "../../utils/formatDate";
 import React, { useState } from "react";
 import axios from "axios";
 
-function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
+function IntakeCard({ intake, fetchIntakeList, fetchDocketList, docketList }) {
   const [showIntakeDeleteConfirmation, setShowIntakeDeleteConfirmation] =
     useState(false);
   const [showDocketDeleteConfirmation, setShowDocketDeleteConfirmation] =
@@ -124,20 +124,26 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
 
       <section className="intake__info">
         <div className="intake__intake">
-          <p className="intake__details">docket</p>
+        <p className="intake__details">docket</p>
           {editMode ? (
-            <input
-              className="intake__edit"
-              type="text"
-              value={editedValues.docket_name}
-              onChange={(e) =>
-                setEditedValues({
-                  ...editedValues,
-                  docket_name: e.target.value,
-                })
-              }
-              placeholder={intake.docket_name}
-            />
+            <select
+            className="intake__edit"
+            value={editedValues.docket_name}
+            onChange={(e) =>
+              setEditedValues({
+                ...editedValues,
+                docket_name: e.target.value,
+              })
+            }
+          >
+            {docketList
+              .sort((a, b) => a.vintage - b.vintage) // Sort docketList by vintage year
+              .map((docket) => (
+                <option key={docket.docket_id} value={docket.docket_name}>
+                  {docket.docket_name}
+                </option>
+              ))}
+            </select>
           ) : (
             <p className="intake__details--right">{intake.docket_name}</p>
           )}

@@ -565,6 +565,7 @@ function FruitIntakePage() {
                   intake={intake}
                   fetchIntakeList={fetchIntakeList}
                   fetchDocketList={fetchDocketList}
+                  docketList={docketList}
                 />
               );
             })}
