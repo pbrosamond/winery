@@ -218,11 +218,12 @@ function FruitIntakePage() {
   const [intakeSortOrder, setIntakeSortOrder] = useState("asc");
   const [intakeSortKey, setIntakeSortKey] = useState("intake_id");
 
-  // Dockets Sorting Logic
+  // Dockets Sorting Logic - Should be in a useEffect
   const sortedDockets = [...searchedDocketCards].sort((a, b) => {
     const valueA = a[docketSortKey];
     const valueB = b[docketSortKey];
-    console.log(docketSortKey, valueA, valueB);
+
+    console.log("sorting")
 
     if (valueA < valueB) {
       return docketSortOrder === "asc" ? -1 : 1;
@@ -237,7 +238,7 @@ function FruitIntakePage() {
   const sortedIntakes = [...searchedIntakeCards].sort((a, b) => {
     const valueA = a[intakeSortKey];
     const valueB = b[intakeSortKey];
-
+  
     if (valueA < valueB) {
       return intakeSortOrder === "asc" ? -1 : 1;
     } else if (valueA > valueB) {

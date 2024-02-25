@@ -52,6 +52,8 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList, docketList }) {
           (editedValues.total_weight - editedValues.tare_weight) * 0.75,
       };
   
+      delete updatedValues.docket_name;
+
       try {
         await axios.patch(
           `http://localhost:8080/api/intakes/${intake.intake_id}`,
@@ -128,18 +130,17 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList, docketList }) {
           {editMode ? (
             <select
             className="intake__edit"
-            value={editedValues.docket_name}
             onChange={(e) =>
               setEditedValues({
                 ...editedValues,
-                docket_name: e.target.value,
+                docket_id: e.target.value,
               })
             }
           >
             {docketList
               .sort((a, b) => a.vintage - b.vintage) // Sort docketList by vintage year
               .map((docket) => (
-                <option key={docket.docket_id} value={docket.docket_name}>
+                <option key={docket.docket_id} value={docket.docket_id}>
                   {docket.docket_name}
                 </option>
               ))}
@@ -204,8 +205,6 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList, docketList }) {
               onChange={(e) =>
                 setEditedValues({
                   ...editedValues,
-                  fruit_weight: e.target.value,
-                  predicted_volume: e.target.value * 0.75,
                 })
               }
             />
@@ -224,8 +223,6 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList, docketList }) {
               onChange={(e) =>
                 setEditedValues({
                   ...editedValues,
-                  predicted_volume: e.target.value,
-                  fruit_weight: e.target.value / 0.75,
                 })
               }
             />
