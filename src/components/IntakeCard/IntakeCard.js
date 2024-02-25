@@ -2,12 +2,15 @@ import "./IntakeCard.scss";
 
 import editIcon from "../../assets/icons/editIcon.svg";
 import deleteIcon from "../../assets/icons/deleteIcon.svg";
+import saveIcon from "../../assets/icons/saveIcon.svg";
+import cancelIcon from "../../assets/icons/cancelIcon.svg";
 
 import formatDate from "../../utils/formatDate";
 import React, { useState } from "react";
 import axios from "axios";
 
 function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
+
   const [showIntakeDeleteConfirmation, setShowIntakeDeleteConfirmation] =
     useState(false);
   const [showDocketDeleteConfirmation, setShowDocketDeleteConfirmation] =
@@ -16,6 +19,38 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
   const handleDeleteClick = () => {
     setShowIntakeDeleteConfirmation(true);
     setShowDocketDeleteConfirmation(false);
+  };
+
+  const [editMode, setEditMode] = useState(false);
+  const [editedValues, setEditedValues] = useState({});
+
+  const handleEditClick = () => {
+    setEditMode(true);
+    setEditedValues({
+      docket_name: intake.docket_name,
+      bins: intake.bins,
+      total_weight: intake.total_weight,
+      tare_weight: intake.tare_weight
+    });
+  };
+
+  const handleSaveClick = async () => {
+    // Make patch/put API call for intake
+    try {
+      await axios.patch(
+        `http://localhost:8080/api/intakes/${intake.intake_id}`,
+        editedValues
+      );
+      setEditMode(false);
+      fetchIntakeList();
+    } catch (error) {
+      console.error("Error updating intake:", error);
+    }
+  };
+
+  const handleCancelClick = () => {
+    setEditMode(false);
+    // Optionally reset edited values if needed
   };
 
   const handleIntakeDeleteConfirmation = async (deleted) => {
@@ -50,7 +85,7 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
       }
     } else {
       // Close both delete confirmation pop-ups
-      setShowDocketDeleteConfirmation(false);   
+      setShowDocketDeleteConfirmation(false);
     }
     fetchIntakeList();
   };
@@ -65,22 +100,60 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
       <section className="intake__info">
         <div className="intake__intake">
           <p className="intake__details">docket</p>
-          <p className="intake__details--right">{intake.docket_name}</p>
+          {editMode ? (
+            <input
+              type="text"
+              value={editedValues.docket_name}
+              onChange={(e) =>
+                setEditedValues({ ...editedValues, docket_name: e.target.value })
+              }
+              placeholder={intake.docket_name}
+            />
+          ) : (
+            <p className="intake__details--right">{intake.docket_name}</p>
+          )}
         </div>
 
         <div className="intake__intake">
           <p className="intake__details">bins</p>
-          <p className="intake__details--right">{intake.bins}</p>
+          {editMode ? (
+            <input
+              type="text"
+              value={editedValues.bins}
+              onChange={(e) => handleChange('bins', e.target.value)}
+              placeholder={intake.bins}
+            />
+          ) : (
+            <p className="intake__details--right">{intake.bins}</p>
+          )}
         </div>
 
         <div className="intake__intake">
           <p className="intake__details">total weight</p>
-          <p className="intake__details--right">{intake.total_weight} kg</p>
+          {editMode ? (
+            <input
+              type="text"
+              value={editedValues.total_weight}
+              onChange={(e) => handleChange('total_weight', e.target.value)}
+              placeholder={intake.total_weight}
+            />
+          ) : (
+            <p className="intake__details--right">{intake.total_weight} kg</p>
+          )}
         </div>
 
         <div className="intake__intake">
           <p className="intake__details">tare weight</p>
-          <p className="intake__details--right">{intake.tare_weight} kg</p>
+          {editMode ? (
+            <input
+              type="text"
+              value={editedValues.tare_weight}
+              onChange={(e) => handleChange('tare_weight', e.target.value)}
+              placeholder={intake.tare_weight}
+            />
+          ) : (
+            <p className="intake__details--right">{intake.tare_weight} kg</p>
+          )}
         </div>
 
         <div className="intake__intake">
@@ -95,13 +168,37 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList }) {
       </section>
 
       <section className="intake__icons">
-        <img className="intake_icon" src={editIcon} alt="Edit Icon" />
-        <img
-          className="intake_icon"
-          src={deleteIcon}
-          alt="Delete Icon"
-          onClick={handleDeleteClick}
-        />
+      {editMode ? (
+          <>
+            <img
+              className="intake_icon"
+              src={saveIcon}
+              alt="Save Icon"
+              onClick={handleSaveClick}
+            />
+            <img
+              className="intake_icon"
+              src={cancelIcon}
+              alt="Cancel Icon"
+              onClick={handleCancelClick}
+            />
+          </>
+        ) : (
+          <>
+            <img
+              className="intake_icon"
+              src={editIcon}
+              alt="Edit Icon"
+              onClick={handleEditClick}
+            />
+            <img
+              className="intake_icon"
+              src={deleteIcon}
+              alt="Delete Icon"
+              onClick={handleDeleteClick}
+            />
+          </>
+        )}
       </section>
 
       {showIntakeDeleteConfirmation && <div className="intake__overlay" />}
