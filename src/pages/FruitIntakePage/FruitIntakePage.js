@@ -144,9 +144,8 @@ function FruitIntakePage() {
   const [intakeSearchQuery, setIntakeSearchQuery] = useState("");
   const [searchedIntakeCards, setSearchedIntakeCards] = useState(intakeList);
 
-  // Function to handle search input change
   const handleDocketSearchChange = (event) => {
-    const query = event.target.value;
+    const query = event.target.value.toLowerCase(); // Convert query to lowercase
     setDocketSearchQuery(query);
     // Call a function to filter docket cards based on the search query
     searchDocketCards(query);
@@ -157,16 +156,16 @@ function FruitIntakePage() {
     if (query.trim() === "") {
       setSearchedDocketCards(docketList);
     } else {
-      // Otherwise, filter based on the search query
+      // Otherwise, filter based on the lowercase search query
       const searched = docketList.filter(
         (docket) =>
-          docket.docket_name.includes(query) ||
+          docket.docket_name.toLowerCase().includes(query) ||
           docket.vintage.toString().includes(query) ||
-          docket.grower.includes(query) ||
-          docket.varietal.includes(query) ||
-          docket.vineyard.includes(query) ||
-          docket.block.includes(query) ||
-          docket.row.includes(query)
+          docket.grower.toLowerCase().includes(query) ||
+          docket.varietal.toLowerCase().includes(query) ||
+          docket.vineyard.toLowerCase().includes(query) ||
+          docket.block.toLowerCase().includes(query) ||
+          docket.row.toLowerCase().includes(query)
       );
       setSearchedDocketCards(searched);
     }
@@ -180,9 +179,9 @@ function FruitIntakePage() {
 
   // Function to handle search input change
   const handleIntakeSearchChange = (event) => {
-    const query = event.target.value;
+    const query = event.target.value.toLowerCase(); // Convert query to lowercase
     setIntakeSearchQuery(query);
-    // Call a function to filter docket cards based on the search query
+    // Call a function to filter intake cards based on the search query
     searchIntakeCards(query);
   };
 
@@ -191,17 +190,17 @@ function FruitIntakePage() {
     if (query.trim() === "") {
       setSearchedIntakeCards(intakeList);
     } else {
-      // Otherwise, filter based on the search query
+      // Otherwise, filter based on the lowercase search query
       const searched = intakeList.filter(
         (intake) =>
           intake.intake_id.toString().includes(query) ||
-          intake.docket_name.includes(query) ||
+          intake.docket_name.toLowerCase().includes(query) ||
           intake.vintage.toString().includes(query) ||
-          intake.grower.includes(query) ||
-          intake.varietal.includes(query) ||
-          intake.vineyard.includes(query) ||
-          intake.block.includes(query) ||
-          intake.row.includes(query)
+          intake.grower.toLowerCase().includes(query) ||
+          intake.varietal.toLowerCase().includes(query) ||
+          intake.vineyard.toLowerCase().includes(query) ||
+          intake.block.toLowerCase().includes(query) ||
+          intake.row.toLowerCase().includes(query)
       );
       setSearchedIntakeCards(searched);
     }
