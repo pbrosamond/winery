@@ -1,0 +1,121 @@
+@use '../../styles/partials/global' as *;
+@use '../../styles/partials/variables' as *;
+@use '../../styles/partials/mixins' as *;
+@use '../../styles/partials/typography' as *;
+
+.intake {   
+
+    &__subcontainer {
+        @include intakes;
+    }
+
+    &__info {
+        @include flexbox (column, 1rem);
+    }
+
+    &__intake {
+        @include flexbox (row, 1rem);
+        justify-content: space-between;
+
+        &--border {
+            @include flexbox;
+            justify-content: space-between;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid $color-grey;
+        }
+    }
+
+    &__edit {
+        text-align: end;
+        background: none;
+        border: none;
+        outline: .0625rem solid $color-grey;
+    }
+
+    &__calculated {
+        text-align: end;
+        background: none;
+        border: none;
+    }
+
+
+
+    &__text {
+        @include h2;
+    }
+
+    &__details {
+        @include p;
+
+        &--right {
+            @include p;
+            justify-self: flex-end;
+        }
+    }
+
+    &__icons {
+        @include flexbox;
+        justify-content: space-between;
+        align-items: flex-end;
+        height: inherit;
+    }
+
+    &__icon {
+
+        &--cancel {
+            height: 1.25rem;
+        }
+
+        &--delete {
+            height: 1.5625rem;
+        }
+    }
+
+    &__delete {
+        @include pop-up;
+
+        &--text {
+            @include h1;            
+        }
+      }
+
+    &__overlay {
+        @include overlay;
+    }
+
+    &__buttons {
+        @include flexbox(row, 2rem);
+    }
+
+    &__button {
+
+        &--delete {
+            @include button;
+            background: $color-red;
+
+            &:hover {
+                background: $color-darkred;
+            }
+        }
+
+        &--save {
+            @include button;
+            background: $gradient-purple;
+
+            &:hover {
+                background: $gradient-darkpurple;
+            }
+        }
+
+        &--cancel {
+            @include button;
+            background: $color-white;
+            border: .0625rem solid $color-grey;
+            color: $color-black;
+
+            &:hover {
+                background: $color-cloud;
+            }
+        }
+    }
+}
