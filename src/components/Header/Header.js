@@ -3,7 +3,6 @@ import "./Header.scss";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
-
 import logo from "../../assets/images/cellarhand_logo.svg";
 import profile from "../../assets/images/cellarhand_profile.png";
 
@@ -21,6 +20,7 @@ function Header() {
           <img className="header__profile" src={profile} alt="Profile" />
           <h2 className="header__account">account</h2>
           <h2 className="header__logout">logout</h2>
+
         </div>
         <nav className="header__nav">
           <ul className="header__list">
