@@ -1,0 +1,46 @@
+@use "./variables" as *;
+
+@font-face {
+  font-family: "Quicksand";
+  src: url("../../assets/fonts/Quicksand-Light.woff") format("woff"),
+    url("../../assets/fonts/Quicksand-Light.woff2") format("woff2"),
+    url("../../assets/fonts/Quicksand-Light.otf") format("opentype"),
+    url("../../assets/fonts/Quicksand-Light.ttf") format("truetype");
+  font-weight: $light;
+}
+
+@font-face {
+  font-family: "Quicksand";
+  src: url("../../assets/fonts/Quicksand-Regular.woff") format("woff"),
+    url("../../assets/fonts/Quicksand-Regular.woff2") format("woff2"),
+    url("../../assets/fonts/Quicksand-Regular.otf") format("opentype"),
+    url("../../assets/fonts/Quicksand-Regular.ttf") format("truetype");
+  font-weight: $regular;
+}
+
+@font-face {
+  font-family: "Quicksand";
+  src: url("../../assets/fonts/Quicksand-Medium.woff") format("woff"),
+    url("../../assets/fonts/Quicksand-Medium.woff2") format("woff2"),
+    url("../../assets/fonts/Quicksand-Medium.otf") format("opentype"),
+    url("../../assets/fonts/Quicksand-Medium.ttf") format("truetype");
+  font-weight: $medium;
+}
+
+@font-face {
+  font-family: "Quicksand";
+  src: url("../../assets/fonts/Quicksand-SemiBold.woff") format("woff"),
+    url("../../assets/fonts/Quicksand-SemiBold.woff2") format("woff2"),
+    url("../../assets/fonts/Quicksand-SemiBold.otf") format("opentype"),
+    url("../../assets/fonts/Quicksand-SemiBold.ttf") format("truetype");
+  font-weight: $semiBold;
+}
+
+@font-face {
+  font-family: "Quicksand";
+  src: url("../../assets/fonts/Quicksand-Bold.woff") format("woff"),
+    url("../../assets/fonts/Quicksand-Bold.woff2") format("woff2"),
+    url("../../assets/fonts/Quicksand-Bold.otf") format("opentype"),
+    url("../../assets/fonts/Quicksand-Bold.ttf") format("truetype");
+  font-weight: $bold;
+}

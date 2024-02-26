@@ -1,0 +1,78 @@
+@use '../../styles/partials/global' as *;
+@use '../../styles/partials/variables' as *;
+@use '../../styles/partials/mixins' as *;
+@use '../../styles/partials/typography' as *;
+
+.header {
+    @include header;
+    padding-bottom: 1.5rem;
+
+    &__container {
+        @include container;
+        @include grid;
+        row-gap: 1rem;
+        align-items: center;
+        padding-bottom: 0;
+    }
+
+    &__logo {
+        @include logo;
+    }
+
+    &__box {
+        @include flexbox(row, 1rem);
+        align-items: center;
+        grid-column: 6;
+        max-width: fit-content;
+    }
+
+    &__profile {
+        @include profile;
+    }
+
+    &__account {
+        @include p;
+
+        &:hover {
+            font-weight: $bold;
+        }
+    }
+
+    &__logout {
+        @include p;
+        padding: 0 1rem;
+        border-left: .0625rem solid $color-black;
+
+        &:hover {
+            font-weight: $bold;
+        }
+    }
+
+    &__nav {
+        @include nav;
+    }
+
+    &__list {
+        @include grid;
+        justify-items: center;
+        align-items: center;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        height: 100%;
+    }
+
+    &__link {
+        text-decoration: none;
+        @include p;
+
+        &:hover {
+            font-weight: $bold;
+        }
+
+        &--active {
+            @include active;
+        }
+    }
+}
+

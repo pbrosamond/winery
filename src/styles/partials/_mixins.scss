@@ -1,0 +1,187 @@
+@use "./variables" as *;
+@use "./typography" as *;
+
+// Responsiveness
+@mixin tablet {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 180px) {
+    @content;
+  }
+}
+
+// Padding
+@mixin container {
+  padding: 2rem 3rem;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+// Display
+@mixin flexbox($direction: row, $gap: 0, $wrap: nowrap) {
+  display: flex;
+  flex-direction: $direction;
+  gap: $gap;
+  flex-wrap: $wrap;
+}
+
+@mixin grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* Three columns with equal width */
+  gap: 2rem;
+}
+
+// Container
+@mixin header {
+  height: 11.375rem;
+  width: 100%;
+  color: $color-white;
+}
+
+// Profile
+@mixin profile {
+  height: 2.375rem;
+  width: 2.375rem;
+  border-radius: 50%;
+  background-size: contain;
+}
+
+// Logo
+@mixin logo {
+  height: 1.875rem;
+  width: 7.4375rem;
+}
+
+// Typography
+@mixin h1 {
+  font-size: 1.875rem;
+  font-weight: $regular;
+  color: $color-black;
+  margin: 0;
+}
+
+@mixin h2 {
+  font-size: 1rem;
+  font-weight: $medium;
+  color: $color-black;
+  margin: 0;
+}
+
+@mixin p {
+  font-size: .875rem;
+  font-weight: $medium;
+  color: $color-black;
+  margin: 0;
+}
+
+// Navigation
+@mixin nav {
+  background-color: $color-cloud;
+  height: 3.75rem;
+  border-radius: 1.25rem;
+  grid-column: 1/7;
+}
+
+@mixin active { 
+  @include flexbox;
+  justify-content: center;
+  align-items: center;
+  height: 3.75rem;
+  width: 10.6875rem;
+  border-radius: 20px;
+  background: $gradient-blue;
+  text-decoration: none;
+  @include p;
+  color: $color-white;
+  font-weight: $bold;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+
+  &:hover {
+    background: $gradient-darkblue;
+}
+}
+
+// Pointer
+@mixin pointer {
+  cursor: pointer;
+}
+
+@mixin dropdown {
+  height: 3.75rem;
+  width: 10.6875rem;
+  border-radius: 1.25rem;
+  padding: 0 1.5rem;
+}
+
+@mixin input {
+  border: none;
+  outline: .0625rem solid $color-grey;
+}
+
+@mixin button {
+  height: 3.75rem;
+  width: 10.6875rem;
+  border-radius: 1.25rem;
+  border: none;
+  background: $gradient-purple;
+  @include h2;
+  color: $color-white;
+  @include pointer;
+
+  &:hover {
+    background: $gradient-darkpurple;
+}
+
+}
+
+@mixin dockets {
+  height: 3.75rem;
+  width: 10.6875rem;
+  border-radius: 1.25rem;
+  border: none;
+  background-color: $color-cloud;
+  @include p;
+}
+
+@mixin intakes {
+  height: 23.3125rem;
+  width: 23.3125rem;
+  background-color: $color-cloud;
+  border-radius: 1.25rem;
+  padding: 2rem;
+  @include flexbox(column, 1rem);
+}
+
+@mixin pop-up {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 7rem;
+  line-height: 3rem;
+  border-radius: 1.25rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 45rem;
+  height: 20rem;
+  @include flexbox(column, 2rem);
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+@mixin overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); // Dark semi-transparent background
+  z-index: 999;
+}
+
