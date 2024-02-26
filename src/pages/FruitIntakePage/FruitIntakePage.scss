@@ -63,12 +63,20 @@
         background: url('../../assets/icons/chevronIcon.svg') no-repeat right 1.5rem center;
         background-size: 0.7rem;
 
+        &:focus {
+            outline: 1px solid $color-black;
+        }
+
         &--date {
             @include dropdown;
             @include input;
             appearance: none;
             background: url('../../assets/icons/calendarIcon.svg') no-repeat right 1.5rem center;
             background-size: 0.8rem;
+
+            &:focus {
+                outline: 1px solid $color-black;
+            }
 
             &.range {
                 grid-column: 1;
@@ -82,6 +90,10 @@
             @include input;
             appearance: none;
             background: none;
+
+            &:focus {
+                outline: 1px solid $color-black;
+            }
         }
 
         &--search {
@@ -90,6 +102,10 @@
             appearance: none;
             background: url('../../assets/icons/searchIcon.svg') no-repeat right 1.5rem center;
             background-size: 0.8rem;
+
+            &:focus {
+                outline: 1px solid $color-black;
+            }
         }
 
         &--sort {
@@ -98,6 +114,10 @@
             appearance: none;
             background: url('../../assets/icons/funnelIcon.svg') no-repeat right 1.5rem center;
             background-size: 0.8rem;
+
+            &:focus {
+                outline: 1px solid $color-black;
+            }
         }
     }
 
@@ -207,5 +227,21 @@
         @include button;
         grid-column: 1;
         grid-row: 3;
+    }
+}
+
+.invalid {
+    outline: .0625rem solid $color-red;
+
+    &__text {
+        @include p;
+        color: $color-red;
+
+        &--docket {
+            @include p;
+            color: $color-red;
+            grid-column: 1;
+            grid-row-end: span -1;
+        }
     }
 }

@@ -1,19 +1,30 @@
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import DocketCard from "../../components/DocketCard/DocketCard";
 import IntakeCard from "../../components/IntakeCard/IntakeCard";
 import exportToCSV from "../../utils/exportToCSV";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
 import "./FruitIntakePage.scss";
-
-import React, { useState, useEffect } from "react";
-import axios from "axios";
 
 // const { REACT_APP_API_BASE_PATH } = process.env;
 
 function FruitIntakePage() {
-  // Docket API Request
+  // Docket State and Functions
+  const [docketList, setDocketList] = useState([]);
+  const [docketData, setDocketData] = useState({
+    vintage: "",
+    grower: "",
+    varietal: "",
+    vineyard: "",
+    block: "",
+    row: "",
+  });
+  const [selectedDocket, setSelectedDocket] = useState("");
+  const [intakeDate, setIntakeDate] = useState(new Date());
+  const [formErrors, setFormErrors] = useState({});
 
+  // Docket API Request
   const fetchDocketList = async () => {
     try {
       const response = await axios.get(`http://localhost:8080/api/dockets`);
@@ -27,47 +38,57 @@ function FruitIntakePage() {
     fetchDocketList();
   }, []);
 
-  const initialDocketData = {
-    vintage: "",
-    grower: "",
-    varietal: "",
-    vineyard: "",
-    block: "",
-    row: "",
-  };
-
-  const [docketData, setDocketData] = useState(initialDocketData);
-  const [docketList, setDocketList] = useState([]);
-  const [intakeDate, setIntakeDate] = useState(new Date());
-  const [selectedDocket, setSelectedDocket] = useState("");
-
   const handleSelectedDocketChange = (docket_name) => {
     setSelectedDocket(docket_name);
+
+    // Clear the error message for the selected docket
+    setFormErrors((prevErrors) => ({ ...prevErrors, docket_name: "" }));
   };
 
   const handleInputChangeDocket = (e) => {
     const { name, value } = e.target;
+
+    // Clear the error message for the changed field
+    setFormErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+
     setDocketData({ ...docketData, [name]: value });
   };
 
   const handleSubmitDocket = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.post(
-        "http://localhost:8080/api/dockets",
-        docketData
-      );
-      setDocketData(initialDocketData);
-      fetchDocketList();
-      // Handle successful response
-    } catch (error) {
-      console.error("Error submitting data:", error.message);
+    if (handleSubmitDocketValidation()) {
+      try {
+        await axios.post("http://localhost:8080/api/dockets", docketData);
+        setDocketData({
+          vintage: "",
+          grower: "",
+          varietal: "",
+          vineyard: "",
+          block: "",
+          row: "",
+        });
+        fetchDocketList();
+        // Handle successful response
+      } catch (error) {
+        console.error("Error submitting data:", error.message);
+      }
     }
   };
 
-  // Intake API Request
+  // Intake State and Functions
+  const [intakeList, setIntakeList] = useState([]);
+  const [intakeData, setIntakeData] = useState({
+    docket_name: "",
+    intake_date: "",
+    bins: "",
+    total_weight: "",
+    tare_weight: "",
+    block: "",
+    row: "",
+  });
 
+  // Intake API Request
   const fetchIntakeList = async () => {
     try {
       const response = await axios.get(`http://localhost:8080/api/intakes`);
@@ -81,21 +102,12 @@ function FruitIntakePage() {
     fetchIntakeList();
   }, []);
 
-  const initialIntakeData = {
-    docket_name: "",
-    intake_date: "",
-    bins: "",
-    total_weight: "",
-    tare_weight: "",
-    block: "",
-    row: "",
-  };
-
-  const [intakeData, setIntakeData] = useState(initialIntakeData);
-  const [intakeList, setIntakeList] = useState([]);
-
   const handleInputChangeIntake = (e) => {
     const { name, value } = e.target;
+    
+    // Clear the error message for the changed field
+    setFormErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+
     setIntakeData({ ...intakeData, [name]: value });
   };
 
@@ -107,56 +119,57 @@ function FruitIntakePage() {
     );
 
     const newIntakeData = Object.assign({}, intakeData, docketData);
-    newIntakeData.intake_date = new Date(intakeDate).toISOString().slice(0, 10);
+    newIntakeData.intake_date = new Date(intakeDate)
+      .toISOString()
+      .slice(0, 10);
 
+    if (handleSubmitIntakeValidation()) {
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/intakes",
-        newIntakeData
-      );
+      await axios.post("http://localhost:8080/api/intakes", newIntakeData);
       setSelectedDocket("");
-      setIntakeData(initialIntakeData);
+      setIntakeData({
+        docket_name: "",
+        intake_date: "",
+        bins: "",
+        total_weight: "",
+        tare_weight: "",
+        block: "",
+        row: "",
+      });
       fetchIntakeList();
     } catch (error) {
       console.error("Error submitting data:", error.message);
     }
-  };
+  }};
 
   // Date Picker
-
   const handleDateChange = (date) => {
     setIntakeDate(date);
   };
 
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState(null);
+
   const onDateChange = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
   };
 
-  // Search Bar Dockets
-
+  // Dockets Search
   const [docketSearchQuery, setDocketSearchQuery] = useState("");
   const [searchedDocketCards, setSearchedDocketCards] = useState(docketList);
 
-  const [intakeSearchQuery, setIntakeSearchQuery] = useState("");
-  const [searchedIntakeCards, setSearchedIntakeCards] = useState(intakeList);
-
   const handleDocketSearchChange = (event) => {
-    const query = event.target.value.toLowerCase(); // Convert query to lowercase
+    const query = event.target.value.toLowerCase();
     setDocketSearchQuery(query);
-    // Call a function to filter docket cards based on the search query
     searchDocketCards(query);
   };
 
   const searchDocketCards = (query) => {
-    // If the search query is empty, show all dockets
     if (query.trim() === "") {
       setSearchedDocketCards(docketList);
     } else {
-      // Otherwise, filter based on the lowercase search query
       const searched = docketList.filter(
         (docket) =>
           docket.docket_name.toLowerCase().includes(query) ||
@@ -175,22 +188,20 @@ function FruitIntakePage() {
     searchDocketCards(docketSearchQuery);
   }, [docketSearchQuery, docketList]);
 
-  // Search Bar Intakes
+  // Intakes Search
+  const [intakeSearchQuery, setIntakeSearchQuery] = useState("");
+  const [searchedIntakeCards, setSearchedIntakeCards] = useState(intakeList);
 
-  // Function to handle search input change
   const handleIntakeSearchChange = (event) => {
-    const query = event.target.value.toLowerCase(); // Convert query to lowercase
+    const query = event.target.value.toLowerCase();
     setIntakeSearchQuery(query);
-    // Call a function to filter intake cards based on the search query
     searchIntakeCards(query);
   };
 
   const searchIntakeCards = (query) => {
-    // If the search query is empty, show all intakes
     if (query.trim() === "") {
       setSearchedIntakeCards(intakeList);
     } else {
-      // Otherwise, filter based on the lowercase search query
       const searched = intakeList.filter(
         (intake) =>
           intake.intake_id.toString().includes(query) ||
@@ -210,20 +221,17 @@ function FruitIntakePage() {
     searchIntakeCards(intakeSearchQuery);
   }, [intakeSearchQuery, intakeList]);
 
-  // Sort Functionality
-
+  // Sorting
   const [docketSortOrder, setDocketSortOrder] = useState("asc");
   const [docketSortKey, setDocketSortKey] = useState("docket_name");
 
   const [intakeSortOrder, setIntakeSortOrder] = useState("asc");
   const [intakeSortKey, setIntakeSortKey] = useState("intake_id");
 
-  // Dockets Sorting Logic - Should be in a useEffect
+  // Dockets Sorting Logic
   const sortedDockets = [...searchedDocketCards].sort((a, b) => {
     const valueA = a[docketSortKey];
     const valueB = b[docketSortKey];
-
-    console.log("sorting")
 
     if (valueA < valueB) {
       return docketSortOrder === "asc" ? -1 : 1;
@@ -238,7 +246,7 @@ function FruitIntakePage() {
   const sortedIntakes = [...searchedIntakeCards].sort((a, b) => {
     const valueA = a[intakeSortKey];
     const valueB = b[intakeSortKey];
-  
+
     if (valueA < valueB) {
       return intakeSortOrder === "asc" ? -1 : 1;
     } else if (valueA > valueB) {
@@ -248,17 +256,70 @@ function FruitIntakePage() {
     }
   });
 
+  // Submit Validation for Docket
+  const handleSubmitDocketValidation = () => {
+    const formFields = { ...docketData };
+    const formErrors = {};
+    let formIsValid = true;
+
+    const requiredFormField = [
+      "vintage",
+      "grower",
+      "varietal",
+      "vineyard",
+      "block",
+      "row",
+    ];
+
+    requiredFormField.forEach((field) => {
+      if (!formFields[field]) {
+        formIsValid = false;
+        formErrors[field] = "required field";
+      }
+    });
+
+    setFormErrors(formErrors);
+
+    return formIsValid;
+  };
+
+  // Submit Validation for Intake
+const handleSubmitIntakeValidation = () => {
+  const formFields = { ...intakeData };
+  const formErrors = {};
+  let formIsValid = true;
+
+  const requiredFormField = [
+    "intake_date",
+    "docket_name",
+    "bins",
+    "total_weight",
+    "tare_weight"
+  ];
+
+  requiredFormField.forEach((field) => {
+    if (!formFields[field]) {
+      formIsValid = false;
+      formErrors[field] = "required field";
+    }
+  });
+
+  setFormErrors(formErrors);
+
+  return formIsValid;
+};
+
   return (
     <main className="main">
       <h1 className="main__title">add new docket</h1>
 
       <form onSubmit={handleSubmitDocket} className="main__form1">
-        <div className="main__box1">
+      <div className="main__box1">
           <label htmlFor="vintage">
             <p className="main__label">vintage year</p>
           </label>
           <select
-            className="main__dropdown"
+            className={`main__dropdown ${formErrors.vintage ? 'invalid' : ''}`}
             id="vintage"
             name="vintage"
             value={docketData.vintage}
@@ -269,6 +330,7 @@ function FruitIntakePage() {
             <option value="2023">2023</option>
             <option value="2022">2022</option>
           </select>
+          {formErrors.vintage && <span className="invalid__text">{formErrors.vintage}</span>}
         </div>
 
         <div className="main__box2">
@@ -276,7 +338,7 @@ function FruitIntakePage() {
             <p className="main__label">grower</p>
           </label>
           <select
-            className="main__dropdown"
+            className={`main__dropdown ${formErrors.grower ? 'invalid' : ''}`}
             id="grower"
             name="grower"
             value={docketData.grower}
@@ -287,6 +349,7 @@ function FruitIntakePage() {
             <option value="Unsworth">Unsworth</option>
             <option value="Sonoma Mill">Sonoma Mill</option>
           </select>
+          {formErrors.grower && <span className="invalid__text">{formErrors.grower}</span>}
         </div>
 
         <div className="main__box3">
@@ -294,7 +357,7 @@ function FruitIntakePage() {
             <p className="main__label">varietal</p>
           </label>
           <select
-            className="main__dropdown"
+            className={`main__dropdown ${formErrors.varietal ? 'invalid' : ''}`}
             id="varietal"
             name="varietal"
             value={docketData.varietal}
@@ -305,6 +368,7 @@ function FruitIntakePage() {
             <option value="Pinot Noir">Pinot Noir</option>
             <option value="Furmint">Furmint</option>
           </select>
+          {formErrors.varietal && <span className="invalid__text">{formErrors.varietal}</span>}
         </div>
 
         <div className="main__box4">
@@ -312,7 +376,7 @@ function FruitIntakePage() {
             <p className="main__label">vineyard</p>
           </label>
           <select
-            className="main__dropdown"
+            className={`main__dropdown ${formErrors.vineyard ? 'invalid' : ''}`}
             id="vineyard"
             name="vineyard"
             value={docketData.vineyard}
@@ -323,6 +387,8 @@ function FruitIntakePage() {
             <option value="Carlos">Carlos</option>
             <option value="Syracuse">Syracuse</option>
           </select>
+          {formErrors.vineyard && <span className="invalid__text">{formErrors.vineyard}</span>}
+
         </div>
 
         <div className="main__box5">
@@ -330,7 +396,7 @@ function FruitIntakePage() {
             <p className="main__label">block</p>
           </label>
           <select
-            className="main__dropdown"
+            className={`main__dropdown ${formErrors.block ? 'invalid' : ''}`}
             id="block"
             name="block"
             value={docketData.block}
@@ -341,6 +407,7 @@ function FruitIntakePage() {
             <option value="2">2</option>
             <option value="3">3</option>
           </select>
+          {formErrors.block && <span className="invalid__text">{formErrors.block}</span>}
         </div>
 
         <div className="main__box6">
@@ -348,7 +415,7 @@ function FruitIntakePage() {
             <p className="main__label">row</p>
           </label>
           <select
-            className="main__dropdown"
+            className={`main__dropdown ${formErrors.row ? 'invalid' : ''}`}
             id="row"
             name="row"
             value={docketData.row}
@@ -359,6 +426,7 @@ function FruitIntakePage() {
             <option value="2">2</option>
             <option value="3">3</option>
           </select>
+          {formErrors.row && <span className="invalid__text">{formErrors.row}</span>}
         </div>
 
         <button className="main__button1" type="submit">
@@ -440,6 +508,7 @@ function FruitIntakePage() {
               }
             }
           )}
+          {formErrors.docket_name && <span className="invalid__text--docket">{formErrors.docket_name}</span>}
         </section>
 
         <div className="main__box9 box-margin">
@@ -447,12 +516,13 @@ function FruitIntakePage() {
             <p className="main__label">bins</p>
           </label>
           <input
-            className="main__dropdown--text"
+            className={`main__dropdown--text ${formErrors.bins ? 'invalid' : ''}`}
             id="bins"
             name="bins"
             value={intakeData.bins}
             onChange={handleInputChangeIntake}
           />
+          {formErrors.bins && <span className="invalid__text">{formErrors.bins}</span>}
         </div>
 
         <div className="main__box10 box-margin">
@@ -460,12 +530,13 @@ function FruitIntakePage() {
             <p className="main__label">total weight</p>
           </label>
           <input
-            className="main__dropdown--text"
+            className={`main__dropdown--text ${formErrors.total_weight ? 'invalid' : ''}`}
             id="total_weight"
             name="total_weight"
             value={intakeData.total_weight}
             onChange={handleInputChangeIntake}
           />
+          {formErrors.total_weight && <span className="invalid__text">{formErrors.total_weight}</span>}
         </div>
 
         <div className="main__box11 box-margin">
@@ -473,12 +544,13 @@ function FruitIntakePage() {
             <p className="main__label">tare weight</p>
           </label>
           <input
-            className="main__dropdown--text"
+            className={`main__dropdown--text ${formErrors.tare_weight ? 'invalid' : ''}`}
             id="tare_weight"
             name="tare_weight"
             value={intakeData.tare_weight}
             onChange={handleInputChangeIntake}
           />
+          {formErrors.tare_weight && <span className="invalid__text">{formErrors.tare_weight}</span>}
         </div>
 
         <button
