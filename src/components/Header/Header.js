@@ -7,6 +7,7 @@ import logo from "../../assets/images/cellarhand_logo.svg";
 import profile from "../../assets/images/cellarhand_profile.png";
 
 function Header() {
+
   const location = useLocation();
 
   return (
