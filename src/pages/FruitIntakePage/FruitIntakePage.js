@@ -141,9 +141,11 @@ function FruitIntakePage() {
   const handleSubmitIntake = async (e) => {
     e.preventDefault();
 
+    
     const docketData = docketList.find(
       (el) => el.docket_name === selectedDocket
-    );
+      );
+      console.log("this one", selectedDocket)
 
     const newIntakeData = Object.assign({}, intakeData, docketData);
     newIntakeData.intake_date = new Date(intakeDate)
@@ -168,6 +170,9 @@ function FruitIntakePage() {
       console.error("Error submitting data:", error.message);
     }
   }};
+
+  console.log("docketList:", docketList);
+  console.log("selectedDocket:", selectedDocket);
 
   // Date Picker
   const handleDateChange = (date) => {
