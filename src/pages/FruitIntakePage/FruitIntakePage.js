@@ -117,7 +117,6 @@ function FruitIntakePage() {
   const convertUnit = (weight) => {
     try {
       const [,amount, units] = weight.match(/^(\d+)\s*([a-zA-Z]+)$/)
-      console.log(amount,units)
       return weight;
 
     } catch (error) {
@@ -151,11 +150,7 @@ function FruitIntakePage() {
       .toISOString()
       .slice(0, 10);
 
-      console.log("newIntakeData:", newIntakeData);
-
-
     if (handleSubmitIntakeValidation()) {
-      console.log("submitting")
     try {
       await axios.post("http://localhost:8080/api/intakes", newIntakeData);
       setSelectedDocket("");
@@ -335,7 +330,6 @@ const handleSubmitIntakeValidation = () => {
   requiredFormField.forEach((field) => {
     if (!formFields[field]) {
       formIsValid = false;
-      console.log("field", field)
       formErrors[field] = "required field";
     }
   });
