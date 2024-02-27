@@ -145,10 +145,6 @@ function FruitIntakePage() {
     const docketData = docketList.find(
       (el) => el.docket_name === selectedDocket
       );
-      console.log("docketList:", docketList);
-      console.log("docketData:", docketData);
-      console.log("selectedDocket:", selectedDocket);
-
 
     const newIntakeData = Object.assign({}, intakeData, docketData);
     newIntakeData.intake_date = new Date(intakeDate)
