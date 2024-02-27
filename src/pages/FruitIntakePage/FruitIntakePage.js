@@ -145,14 +145,21 @@ function FruitIntakePage() {
     const docketData = docketList.find(
       (el) => el.docket_name === selectedDocket
       );
-      console.log("this one", selectedDocket)
+      console.log("docketList:", docketList);
+      console.log("docketData:", docketData);
+      console.log("selectedDocket:", selectedDocket);
+
 
     const newIntakeData = Object.assign({}, intakeData, docketData);
     newIntakeData.intake_date = new Date(intakeDate)
       .toISOString()
       .slice(0, 10);
 
+      console.log("newIntakeData:", newIntakeData);
+
+
     if (handleSubmitIntakeValidation()) {
+      console.log("submitting")
     try {
       await axios.post("http://localhost:8080/api/intakes", newIntakeData);
       setSelectedDocket("");
@@ -170,9 +177,6 @@ function FruitIntakePage() {
       console.error("Error submitting data:", error.message);
     }
   }};
-
-  console.log("docketList:", docketList);
-  console.log("selectedDocket:", selectedDocket);
 
   // Date Picker
   const handleDateChange = (date) => {
@@ -322,16 +326,20 @@ const handleSubmitIntakeValidation = () => {
   let formIsValid = true;
 
   const requiredFormField = [
-    "intake_date",
-    "docket_name",
     "bins",
     "total_weight",
     "tare_weight"
   ];
 
+  if (!selectedDocket) {
+    formIsValid = false;
+    formErrors["docket_name"] = "required field";
+  }
+
   requiredFormField.forEach((field) => {
     if (!formFields[field]) {
       formIsValid = false;
+      console.log("field", field)
       formErrors[field] = "required field";
     }
   });
@@ -481,6 +489,7 @@ const handleSubmitIntakeValidation = () => {
             onChange={handleDateChange}
             dateFormat="yyyy | MM | dd"
             className="main__dropdown--date"
+            id="intake_date"
           />
         </div>
 
@@ -602,6 +611,7 @@ const handleSubmitIntakeValidation = () => {
             <p className="main__label">date range</p>
           </label>
           <DatePicker
+            id="date_range"
             selected={startDate}
             onChange={onDateChange}
             startDate={startDate}
