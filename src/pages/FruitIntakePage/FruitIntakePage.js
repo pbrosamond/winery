@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import convert from "convert-units";
 import DocketCard from "../../components/DocketCard/DocketCard";
 import IntakeCard from "../../components/IntakeCard/IntakeCard";
 import exportToCSV from "../../utils/exportToCSV";
@@ -111,12 +112,38 @@ function FruitIntakePage() {
     setIntakeData({ ...intakeData, [name]: value });
   };
 
+  // Unit Conversion (tare_weight and total_weight)
+
+  const convertUnit = (weight) => {
+    try {
+      const [,amount, units] = weight.match(/^(\d+)\s*([a-zA-Z]+)$/)
+      return weight;
+
+    } catch (error) {
+      return weight;
+    }
+  }
+
+  const handleInputChangeIntakeWeight = (e) => {
+    let { name, value } = e.target;
+    
+    // Clear the error message for the changed field
+    setFormErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+
+    value = convertUnit(value);
+
+    setIntakeData({ ...intakeData, [name]: value });
+
+  };
+
+
   const handleSubmitIntake = async (e) => {
     e.preventDefault();
 
+    
     const docketData = docketList.find(
       (el) => el.docket_name === selectedDocket
-    );
+      );
 
     const newIntakeData = Object.assign({}, intakeData, docketData);
     newIntakeData.intake_date = new Date(intakeDate)
@@ -290,12 +317,15 @@ const handleSubmitIntakeValidation = () => {
   let formIsValid = true;
 
   const requiredFormField = [
-    "intake_date",
-    "docket_name",
     "bins",
     "total_weight",
     "tare_weight"
   ];
+
+  if (!selectedDocket) {
+    formIsValid = false;
+    formErrors["docket_name"] = "required field";
+  }
 
   requiredFormField.forEach((field) => {
     if (!formFields[field]) {
@@ -449,6 +479,7 @@ const handleSubmitIntakeValidation = () => {
             onChange={handleDateChange}
             dateFormat="yyyy | MM | dd"
             className="main__dropdown--date"
+            id="intake_date"
           />
         </div>
 
@@ -534,7 +565,7 @@ const handleSubmitIntakeValidation = () => {
             id="total_weight"
             name="total_weight"
             value={intakeData.total_weight}
-            onChange={handleInputChangeIntake}
+            onChange={handleInputChangeIntakeWeight}
           />
           {formErrors.total_weight && <span className="invalid__text">{formErrors.total_weight}</span>}
         </div>
@@ -548,7 +579,7 @@ const handleSubmitIntakeValidation = () => {
             id="tare_weight"
             name="tare_weight"
             value={intakeData.tare_weight}
-            onChange={handleInputChangeIntake}
+            onChange={handleInputChangeIntakeWeight}
           />
           {formErrors.tare_weight && <span className="invalid__text">{formErrors.tare_weight}</span>}
         </div>
@@ -570,6 +601,7 @@ const handleSubmitIntakeValidation = () => {
             <p className="main__label">date range</p>
           </label>
           <DatePicker
+            id="date_range"
             selected={startDate}
             onChange={onDateChange}
             startDate={startDate}
