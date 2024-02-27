@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import convert from "convert-units";
 import DocketCard from "../../components/DocketCard/DocketCard";
 import IntakeCard from "../../components/IntakeCard/IntakeCard";
 import exportToCSV from "../../utils/exportToCSV";
@@ -110,6 +111,32 @@ function FruitIntakePage() {
 
     setIntakeData({ ...intakeData, [name]: value });
   };
+
+  // Unit Conversion (tare_weight and total_weight)
+
+  const convertUnit = (weight) => {
+    try {
+      const [,amount, units] = weight.match(/^(\d+)\s*([a-zA-Z]+)$/)
+      console.log(amount,units)
+      return weight;
+
+    } catch (error) {
+      return weight;
+    }
+  }
+
+  const handleInputChangeIntakeWeight = (e) => {
+    let { name, value } = e.target;
+    
+    // Clear the error message for the changed field
+    setFormErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+
+    value = convertUnit(value);
+
+    setIntakeData({ ...intakeData, [name]: value });
+
+  };
+
 
   const handleSubmitIntake = async (e) => {
     e.preventDefault();
@@ -534,7 +561,7 @@ const handleSubmitIntakeValidation = () => {
             id="total_weight"
             name="total_weight"
             value={intakeData.total_weight}
-            onChange={handleInputChangeIntake}
+            onChange={handleInputChangeIntakeWeight}
           />
           {formErrors.total_weight && <span className="invalid__text">{formErrors.total_weight}</span>}
         </div>
@@ -548,7 +575,7 @@ const handleSubmitIntakeValidation = () => {
             id="tare_weight"
             name="tare_weight"
             value={intakeData.tare_weight}
-            onChange={handleInputChangeIntake}
+            onChange={handleInputChangeIntakeWeight}
           />
           {formErrors.tare_weight && <span className="invalid__text">{formErrors.tare_weight}</span>}
         </div>
