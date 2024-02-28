@@ -228,6 +228,17 @@
         grid-column: 1;
         grid-row: 3;
     }
+
+    &__message {
+        @include pop-up;
+        padding: 2rem;
+        height: fit-content;
+        width: fit-content;
+
+        &--text {
+            @include h1;            
+        }
+      }
 }
 
 .invalid {

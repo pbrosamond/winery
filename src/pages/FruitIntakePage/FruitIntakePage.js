@@ -55,6 +55,20 @@ function FruitIntakePage() {
     setDocketData({ ...docketData, [name]: value });
   };
 
+  // Added Successfully Message
+  const [showMessage, setShowMessage] = useState(false);
+  const [messageText, setMessageText] = useState("");
+
+  const displayMessage = (text) => {
+    setMessageText(text);
+    setShowMessage(true);
+
+    // Hide the message after 2 seconds (adjust the timeout as needed)
+    setTimeout(() => {
+      setShowMessage(false);
+    }, 1000);
+  };
+
   const handleSubmitDocket = async (e) => {
     e.preventDefault();
 
@@ -70,6 +84,7 @@ function FruitIntakePage() {
           row: "",
         });
         fetchDocketList();
+        displayMessage("Docket added");
         // Handle successful response
       } catch (error) {
         console.error("Error submitting data:", error.message);
@@ -105,7 +120,7 @@ function FruitIntakePage() {
 
   const handleInputChangeIntake = (e) => {
     const { name, value } = e.target;
-    
+
     // Clear the error message for the changed field
     setFormErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
 
@@ -116,58 +131,54 @@ function FruitIntakePage() {
 
   const convertUnit = (weight) => {
     try {
-      const [,amount, units] = weight.match(/^(\d+)\s*([a-zA-Z]+)$/)
+      const [, amount, units] = weight.match(/^(\d+)\s*([a-zA-Z]+)$/);
       return weight;
-
     } catch (error) {
       return weight;
     }
-  }
+  };
 
   const handleInputChangeIntakeWeight = (e) => {
     let { name, value } = e.target;
-    
+
     // Clear the error message for the changed field
     setFormErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
 
     value = convertUnit(value);
 
     setIntakeData({ ...intakeData, [name]: value });
-
   };
-
 
   const handleSubmitIntake = async (e) => {
     e.preventDefault();
 
-    
     const docketData = docketList.find(
       (el) => el.docket_name === selectedDocket
-      );
+    );
 
     const newIntakeData = Object.assign({}, intakeData, docketData);
-    newIntakeData.intake_date = new Date(intakeDate)
-      .toISOString()
-      .slice(0, 10);
+    newIntakeData.intake_date = new Date(intakeDate).toISOString().slice(0, 10);
 
     if (handleSubmitIntakeValidation()) {
-    try {
-      await axios.post("http://localhost:8080/api/intakes", newIntakeData);
-      setSelectedDocket("");
-      setIntakeData({
-        docket_name: "",
-        intake_date: "",
-        bins: "",
-        total_weight: "",
-        tare_weight: "",
-        block: "",
-        row: "",
-      });
-      fetchIntakeList();
-    } catch (error) {
-      console.error("Error submitting data:", error.message);
+      try {
+        await axios.post("http://localhost:8080/api/intakes", newIntakeData);
+        setSelectedDocket("");
+        setIntakeData({
+          docket_name: "",
+          intake_date: "",
+          bins: "",
+          total_weight: "",
+          tare_weight: "",
+          block: "",
+          row: "",
+        });
+        fetchIntakeList();
+        displayMessage("Intake added");
+      } catch (error) {
+        console.error("Error submitting data:", error.message);
+      }
     }
-  }};
+  };
 
   // Date Picker
   const handleDateChange = (date) => {
@@ -311,45 +322,41 @@ function FruitIntakePage() {
   };
 
   // Submit Validation for Intake
-const handleSubmitIntakeValidation = () => {
-  const formFields = { ...intakeData };
-  const formErrors = {};
-  let formIsValid = true;
+  const handleSubmitIntakeValidation = () => {
+    const formFields = { ...intakeData };
+    const formErrors = {};
+    let formIsValid = true;
 
-  const requiredFormField = [
-    "bins",
-    "total_weight",
-    "tare_weight"
-  ];
+    const requiredFormField = ["bins", "total_weight", "tare_weight"];
 
-  if (!selectedDocket) {
-    formIsValid = false;
-    formErrors["docket_name"] = "required field";
-  }
-
-  requiredFormField.forEach((field) => {
-    if (!formFields[field]) {
+    if (!selectedDocket) {
       formIsValid = false;
-      formErrors[field] = "required field";
+      formErrors["docket_name"] = "required field";
     }
-  });
 
-  setFormErrors(formErrors);
+    requiredFormField.forEach((field) => {
+      if (!formFields[field]) {
+        formIsValid = false;
+        formErrors[field] = "required field";
+      }
+    });
 
-  return formIsValid;
-};
+    setFormErrors(formErrors);
+
+    return formIsValid;
+  };
 
   return (
     <main className="main">
       <h1 className="main__title">add new docket</h1>
 
       <form onSubmit={handleSubmitDocket} className="main__form1">
-      <div className="main__box1">
+        <div className="main__box1">
           <label htmlFor="vintage">
             <p className="main__label">vintage year</p>
           </label>
           <select
-            className={`main__dropdown ${formErrors.vintage ? 'invalid' : ''}`}
+            className={`main__dropdown ${formErrors.vintage ? "invalid" : ""}`}
             id="vintage"
             name="vintage"
             value={docketData.vintage}
@@ -360,7 +367,9 @@ const handleSubmitIntakeValidation = () => {
             <option value="2023">2023</option>
             <option value="2022">2022</option>
           </select>
-          {formErrors.vintage && <span className="invalid__text">{formErrors.vintage}</span>}
+          {formErrors.vintage && (
+            <span className="invalid__text">{formErrors.vintage}</span>
+          )}
         </div>
 
         <div className="main__box2">
@@ -368,7 +377,7 @@ const handleSubmitIntakeValidation = () => {
             <p className="main__label">grower</p>
           </label>
           <select
-            className={`main__dropdown ${formErrors.grower ? 'invalid' : ''}`}
+            className={`main__dropdown ${formErrors.grower ? "invalid" : ""}`}
             id="grower"
             name="grower"
             value={docketData.grower}
@@ -379,7 +388,9 @@ const handleSubmitIntakeValidation = () => {
             <option value="Unsworth">Unsworth</option>
             <option value="Sonoma Mill">Sonoma Mill</option>
           </select>
-          {formErrors.grower && <span className="invalid__text">{formErrors.grower}</span>}
+          {formErrors.grower && (
+            <span className="invalid__text">{formErrors.grower}</span>
+          )}
         </div>
 
         <div className="main__box3">
@@ -387,7 +398,7 @@ const handleSubmitIntakeValidation = () => {
             <p className="main__label">varietal</p>
           </label>
           <select
-            className={`main__dropdown ${formErrors.varietal ? 'invalid' : ''}`}
+            className={`main__dropdown ${formErrors.varietal ? "invalid" : ""}`}
             id="varietal"
             name="varietal"
             value={docketData.varietal}
@@ -398,7 +409,9 @@ const handleSubmitIntakeValidation = () => {
             <option value="Pinot Noir">Pinot Noir</option>
             <option value="Furmint">Furmint</option>
           </select>
-          {formErrors.varietal && <span className="invalid__text">{formErrors.varietal}</span>}
+          {formErrors.varietal && (
+            <span className="invalid__text">{formErrors.varietal}</span>
+          )}
         </div>
 
         <div className="main__box4">
@@ -406,7 +419,7 @@ const handleSubmitIntakeValidation = () => {
             <p className="main__label">vineyard</p>
           </label>
           <select
-            className={`main__dropdown ${formErrors.vineyard ? 'invalid' : ''}`}
+            className={`main__dropdown ${formErrors.vineyard ? "invalid" : ""}`}
             id="vineyard"
             name="vineyard"
             value={docketData.vineyard}
@@ -417,8 +430,9 @@ const handleSubmitIntakeValidation = () => {
             <option value="Carlos">Carlos</option>
             <option value="Syracuse">Syracuse</option>
           </select>
-          {formErrors.vineyard && <span className="invalid__text">{formErrors.vineyard}</span>}
-
+          {formErrors.vineyard && (
+            <span className="invalid__text">{formErrors.vineyard}</span>
+          )}
         </div>
 
         <div className="main__box5">
@@ -426,7 +440,7 @@ const handleSubmitIntakeValidation = () => {
             <p className="main__label">block</p>
           </label>
           <select
-            className={`main__dropdown ${formErrors.block ? 'invalid' : ''}`}
+            className={`main__dropdown ${formErrors.block ? "invalid" : ""}`}
             id="block"
             name="block"
             value={docketData.block}
@@ -437,7 +451,9 @@ const handleSubmitIntakeValidation = () => {
             <option value="2">2</option>
             <option value="3">3</option>
           </select>
-          {formErrors.block && <span className="invalid__text">{formErrors.block}</span>}
+          {formErrors.block && (
+            <span className="invalid__text">{formErrors.block}</span>
+          )}
         </div>
 
         <div className="main__box6">
@@ -445,7 +461,7 @@ const handleSubmitIntakeValidation = () => {
             <p className="main__label">row</p>
           </label>
           <select
-            className={`main__dropdown ${formErrors.row ? 'invalid' : ''}`}
+            className={`main__dropdown ${formErrors.row ? "invalid" : ""}`}
             id="row"
             name="row"
             value={docketData.row}
@@ -456,12 +472,20 @@ const handleSubmitIntakeValidation = () => {
             <option value="2">2</option>
             <option value="3">3</option>
           </select>
-          {formErrors.row && <span className="invalid__text">{formErrors.row}</span>}
+          {formErrors.row && (
+            <span className="invalid__text">{formErrors.row}</span>
+          )}
         </div>
 
         <button className="main__button1" type="submit">
           add docket
         </button>
+
+        {showMessage && (
+          <div className="main__message">
+            <p className="main__message--text">{messageText}</p>
+          </div>
+        )}
       </form>
 
       <h1 className="main__title">add new intake</h1>
@@ -539,7 +563,11 @@ const handleSubmitIntakeValidation = () => {
               }
             }
           )}
-          {formErrors.docket_name && <span className="invalid__text--docket">{formErrors.docket_name}</span>}
+          {formErrors.docket_name && (
+            <span className="invalid__text--docket">
+              {formErrors.docket_name}
+            </span>
+          )}
         </section>
 
         <div className="main__box9 box-margin">
@@ -547,13 +575,17 @@ const handleSubmitIntakeValidation = () => {
             <p className="main__label">bins</p>
           </label>
           <input
-            className={`main__dropdown--text ${formErrors.bins ? 'invalid' : ''}`}
+            className={`main__dropdown--text ${
+              formErrors.bins ? "invalid" : ""
+            }`}
             id="bins"
             name="bins"
             value={intakeData.bins}
             onChange={handleInputChangeIntake}
           />
-          {formErrors.bins && <span className="invalid__text">{formErrors.bins}</span>}
+          {formErrors.bins && (
+            <span className="invalid__text">{formErrors.bins}</span>
+          )}
         </div>
 
         <div className="main__box10 box-margin">
@@ -561,13 +593,17 @@ const handleSubmitIntakeValidation = () => {
             <p className="main__label">total weight</p>
           </label>
           <input
-            className={`main__dropdown--text ${formErrors.total_weight ? 'invalid' : ''}`}
+            className={`main__dropdown--text ${
+              formErrors.total_weight ? "invalid" : ""
+            }`}
             id="total_weight"
             name="total_weight"
             value={intakeData.total_weight}
             onChange={handleInputChangeIntakeWeight}
           />
-          {formErrors.total_weight && <span className="invalid__text">{formErrors.total_weight}</span>}
+          {formErrors.total_weight && (
+            <span className="invalid__text">{formErrors.total_weight}</span>
+          )}
         </div>
 
         <div className="main__box11 box-margin">
@@ -575,13 +611,17 @@ const handleSubmitIntakeValidation = () => {
             <p className="main__label">tare weight</p>
           </label>
           <input
-            className={`main__dropdown--text ${formErrors.tare_weight ? 'invalid' : ''}`}
+            className={`main__dropdown--text ${
+              formErrors.tare_weight ? "invalid" : ""
+            }`}
             id="tare_weight"
             name="tare_weight"
             value={intakeData.tare_weight}
             onChange={handleInputChangeIntakeWeight}
           />
-          {formErrors.tare_weight && <span className="invalid__text">{formErrors.tare_weight}</span>}
+          {formErrors.tare_weight && (
+            <span className="invalid__text">{formErrors.tare_weight}</span>
+          )}
         </div>
 
         <button
@@ -591,6 +631,12 @@ const handleSubmitIntakeValidation = () => {
         >
           add intake
         </button>
+
+        {showMessage && (
+          <div className="main__message">
+            <p className="main__message--text">{messageText}</p>
+          </div>
+        )}
       </form>
 
       <h1 className="main__title">fruit intake report</h1>
