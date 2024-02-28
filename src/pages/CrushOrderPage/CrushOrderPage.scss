@@ -2,3 +2,24 @@
 @use '../../styles/partials/variables' as *;
 @use '../../styles/partials/mixins' as *;
 @use '../../styles/partials/typography' as *;
+
+.main {
+
+    &__button1 {
+        @include button;
+        background: $gradient-blue;
+        grid-column: 1;
+        grid-row: 4;
+
+        &:hover {
+            background: $gradient-darkblue;
+        }
+    }
+
+    &__button2 {
+        @include button;
+        grid-column: 2;
+        grid-row: 4;
+
+    }
+}
