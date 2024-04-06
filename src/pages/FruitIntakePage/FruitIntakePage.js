@@ -50,7 +50,10 @@ function FruitIntakePage() {
     const { name, value } = e.target;
 
     // Clear the error message for the changed field
-    setFormErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    setFormErrors((prevErrors) => {
+      prevErrors.submission_error = ""
+      return ({ ...prevErrors, [name]: "" })
+    }); 
 
     setDocketData({ ...docketData, [name]: value });
   };
@@ -88,6 +91,11 @@ function FruitIntakePage() {
         // Handle successful response
       } catch (error) {
         console.error("Error submitting data:", error.message);
+
+        if (error.response.data === "Docket already exists"){
+          formErrors["submission_error"] = "docket already exists";
+          setFormErrors(formErrors);
+        }
       }
     }
   };
@@ -132,9 +140,12 @@ function FruitIntakePage() {
   const convertUnit = (weight) => {
     try {
       const [, amount, units] = weight.match(/^(\d+)\s*([a-zA-Z]+)$/);
-      return weight;
+      const convertedWeight = convert(+amount).from(units).to('kg');
+      return convertedWeight;
     } catch (error) {
+
       return weight;
+
     }
   };
 
@@ -143,8 +154,6 @@ function FruitIntakePage() {
 
     // Clear the error message for the changed field
     setFormErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-
-    value = convertUnit(value);
 
     setIntakeData({ ...intakeData, [name]: value });
   };
@@ -159,7 +168,10 @@ function FruitIntakePage() {
     const newIntakeData = Object.assign({}, intakeData, docketData);
     newIntakeData.intake_date = new Date(intakeDate).toISOString().slice(0, 10);
 
-    if (handleSubmitIntakeValidation()) {
+    newIntakeData.total_weight = convertUnit(newIntakeData.total_weight);
+    newIntakeData.tare_weight = convertUnit(newIntakeData.tare_weight);
+
+    if (validateIntakeData(newIntakeData)) {
       try {
         await axios.post("http://localhost:8080/api/intakes", newIntakeData);
         setSelectedDocket("");
@@ -322,17 +334,12 @@ function FruitIntakePage() {
   };
 
   // Submit Validation for Intake
-  const handleSubmitIntakeValidation = () => {
-    const formFields = { ...intakeData };
+  const validateIntakeData = (submittedIntakeData) => {
+    const formFields = { ...submittedIntakeData };
     const formErrors = {};
     let formIsValid = true;
 
-    const requiredFormField = ["bins", "total_weight", "tare_weight"];
-
-    if (!selectedDocket) {
-      formIsValid = false;
-      formErrors["docket_name"] = "required field";
-    }
+    const requiredFormField = ["bins", "total_weight", "tare_weight", "docket_name"];
 
     requiredFormField.forEach((field) => {
       if (!formFields[field]) {
@@ -340,6 +347,21 @@ function FruitIntakePage() {
         formErrors[field] = "required field";
       }
     });
+
+    if (intakeData.bins && !intakeData.bins.match(/^\d+$/) ){
+      formIsValid = false;
+      formErrors["bins"] = "unrecognized quantity";
+    }
+
+    if (intakeData.total_weight && !intakeData.total_weight.match(/^(\d+)$/)){
+      formIsValid = false;
+      formErrors["total_weight"] = "unrecognized weight";
+    }
+
+    if (intakeData.tare_weight && !intakeData.tare_weight.match(/^(\d+)$/)){
+      formIsValid = false;
+      formErrors["tare_weight"] = "unrecognized weight";
+    }
 
     setFormErrors(formErrors);
 
@@ -481,6 +503,12 @@ function FruitIntakePage() {
           add docket
         </button>
 
+        <div className="submissionError">
+        {formErrors.submission_error && (
+            <span className="invalid__text">{formErrors.submission_error}</span>
+          )}
+        </div>
+
         {showMessage && (
           <div className="main__message">
             <p className="main__message--text">{messageText}</p>
@@ -496,7 +524,7 @@ function FruitIntakePage() {
       >
         <div className="main__box8 box-margin">
           <label htmlFor="intake_date">
-            <p className="main__label">date</p>
+            <p className="main__label--date">date</p>
           </label>
           <DatePicker
             selected={intakeDate}
