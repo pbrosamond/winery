@@ -140,11 +140,26 @@ function FruitIntakePage() {
   const convertUnit = (weight) => {
     try {
       console.log(`Original weight input: ${weight}`);
-      const match = weight.match(/^(\d+)\s*([a-zA-Z]+)$/);
+      const match = weight.match(/^(\d+)(\s*([a-zA-Z]*))?$/);
       if (match) {
-        const amount = parseFloat(match[1]);
-        const units = match[2].toLowerCase();
+        let amount = parseFloat(match[1]);
+        let units = match[3] ? match[3].toLowerCase() : 'kg'; // Default to 'kg' if units are not specified
         console.log(`Parsed amount: ${amount}, units: ${units}`);
+  
+        // Correct common unit misentries
+        const unitCorrections = {
+          'kgs': 'kg',
+          'grams': 'g',
+          'mgs': 'mg',
+          'lbs': 'lb',
+          'ounces': 'oz',
+          'tonnes': 't',
+        };
+  
+        if (units in unitCorrections) {
+          units = unitCorrections[units];
+        }
+  
         const convertedWeight = convert(amount).from(units).to('kg');
         console.log(`Converted weight: ${convertedWeight} kg`);
         return convertedWeight;
@@ -373,12 +388,12 @@ function FruitIntakePage() {
       formErrors["bins"] = "unrecognized quantity";
     }
 
-    if (intakeData.total_weight && !intakeData.total_weight.match(/^(\d+)\s*[a-zA-Z]+$/)){
+    if (intakeData.total_weight && !intakeData.total_weight.match(/^(\d+)(\s*[a-zA-Z]*)?$/)){
       formIsValid = false;
       formErrors["total_weight"] = "unrecognized weight";
     }
   
-    if (intakeData.tare_weight && !intakeData.tare_weight.match(/^(\d+)\s*[a-zA-Z]+$/)){
+    if (intakeData.tare_weight && !intakeData.tare_weight.match(/^(\d+)(\s*[a-zA-Z]*)?$/)){
       formIsValid = false;
       formErrors["tare_weight"] = "unrecognized weight";
     }
