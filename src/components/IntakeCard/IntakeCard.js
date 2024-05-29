@@ -292,6 +292,8 @@ function IntakeCard({ intake, fetchIntakeList, fetchDocketList, docketList }) {
         </div>
       )}
 
+      {showDocketDeleteConfirmation && <div className="intake__overlay" />}
+
       {showDocketDeleteConfirmation && (
         <div className="intake__delete">
           <p className="intake__delete--text">

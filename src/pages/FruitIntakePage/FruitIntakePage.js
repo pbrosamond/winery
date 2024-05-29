@@ -139,13 +139,21 @@ function FruitIntakePage() {
 
   const convertUnit = (weight) => {
     try {
-      const [, amount, units] = weight.match(/^(\d+)\s*([a-zA-Z]+)$/);
-      const convertedWeight = convert(+amount).from(units).to('kg');
-      return convertedWeight;
+      console.log(`Original weight input: ${weight}`);
+      const match = weight.match(/^(\d+)\s*([a-zA-Z]+)$/);
+      if (match) {
+        const amount = parseFloat(match[1]);
+        const units = match[2].toLowerCase();
+        console.log(`Parsed amount: ${amount}, units: ${units}`);
+        const convertedWeight = convert(amount).from(units).to('kg');
+        console.log(`Converted weight: ${convertedWeight} kg`);
+        return convertedWeight;
+      } else {
+        throw new Error("Invalid format");
+      }
     } catch (error) {
-
-      return weight;
-
+      console.error("Conversion error:", error);
+      throw error;
     }
   };
 
@@ -160,17 +168,28 @@ function FruitIntakePage() {
 
   const handleSubmitIntake = async (e) => {
     e.preventDefault();
-
+  
     const docketData = docketList.find(
       (el) => el.docket_name === selectedDocket
     );
-
+  
     const newIntakeData = Object.assign({}, intakeData, docketData);
     newIntakeData.intake_date = new Date(intakeDate).toISOString().slice(0, 10);
-
-    newIntakeData.total_weight = convertUnit(newIntakeData.total_weight);
-    newIntakeData.tare_weight = convertUnit(newIntakeData.tare_weight);
-
+  
+    // Convert weights before submitting
+    try {
+      newIntakeData.total_weight = convertUnit(newIntakeData.total_weight);
+      newIntakeData.tare_weight = convertUnit(newIntakeData.tare_weight);
+    } catch (conversionError) {
+      console.error("Conversion error:", conversionError);
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        total_weight: "Invalid weight format",
+        tare_weight: "Invalid weight format",
+      }));
+      return;
+    }
+  
     if (validateIntakeData(newIntakeData)) {
       try {
         await axios.post("http://localhost:8080/api/intakes", newIntakeData);
@@ -191,6 +210,7 @@ function FruitIntakePage() {
       }
     }
   };
+  
 
   // Date Picker
   const handleDateChange = (date) => {
@@ -353,12 +373,12 @@ function FruitIntakePage() {
       formErrors["bins"] = "unrecognized quantity";
     }
 
-    if (intakeData.total_weight && !intakeData.total_weight.match(/^(\d+)$/)){
+    if (intakeData.total_weight && !intakeData.total_weight.match(/^(\d+)\s*[a-zA-Z]+$/)){
       formIsValid = false;
       formErrors["total_weight"] = "unrecognized weight";
     }
-
-    if (intakeData.tare_weight && !intakeData.tare_weight.match(/^(\d+)$/)){
+  
+    if (intakeData.tare_weight && !intakeData.tare_weight.match(/^(\d+)\s*[a-zA-Z]+$/)){
       formIsValid = false;
       formErrors["tare_weight"] = "unrecognized weight";
     }
