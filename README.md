@@ -314,3 +314,4 @@ Response:
 - Crush Order, and Racking Pages
 - Filter and search bar functionality
 - Calendar date picker functionality
+- Login capabilities
